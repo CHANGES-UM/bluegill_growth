@@ -6,6 +6,8 @@
 #### load libraries ####
 library(dismo) #for BRT modeling
 library(vip) #for plotting 
+#devtools::install_github("JBjouffray/ggBRT") # only need to install once
+library(ggBRT) #BRT plotting and summary statistics
 
 ### read in data that was created from 01_data cleaning scripts # 
 binded<-read.csv("bluegill_data/model_data.csv")
@@ -29,6 +31,15 @@ vip(brt.a1,
   ggtitle("Age 1") +  
   theme_light() + 
   geom_hline(yintercept=0.0667,linetype="dashed", lwd=0.5,colour="blue") #adding critical threshold 1/15 = 0.0667
+
+#ggBRT plots and summary
+#Per. Expl is interpretted like an R^2
+#cvCorrelation is how well training data predictions correlate w/ validation data
+ggPerformance(brt.a1) 
+
+#Quick and dirty relative influence plot that looks decent
+ggInfluence(brt.a1, main = "Age 1")
+
 
 #interaction investigation 
 brt.int1=gbm.interactions(brt.a1) 
