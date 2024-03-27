@@ -328,14 +328,14 @@ model_data_final<-left_join(model_data, snt_blg_cpue, by=c('new_key', 'Survey_Nu
   natural_join(cpue_hist, by=c('new_key', 'year'),  jointype = "LEFT")
 
 
-write.csv(model_data_final, "bluegill_data/model_data.csv", row.names = FALSE)
+#write.csv(model_data_final, "bluegill_data/model_data.csv", row.names = FALSE)
 
-#### FINAL PREDICTOR VARIABLES 15 variables not including blg density 
-#perch, lmb, pike, walleye, secchi_m,  urban, ag, forest, wetlands, year, doy, logcounty, logarea, logdepth, DD_mean
+#### FINAL PREDICTOR VARIABLES 16 variables
+#perch, lmb, pike, walleye, secchi_m,  urban, ag, forest, wetlands, year, doy, logcounty, logarea, logdepth, DD_mean, cpue
 
 #number of unique lakes 
-n_distinct(model_data$new_key) 
+n_distinct(model_data_final$new_key) 
 
 #summary stats 
-skimr::skim(model_data)
+skimr::skim(model_data_final)
   
