@@ -7,6 +7,9 @@
 library(tidyr) #data munging 
 library(dplyr) #data munging 
 library(skimr) #summary statistics 
+library(readxl) #reading in excel files 
+library(data.table) #needed for year day (doy)
+library(rqdatatable) #library for natural_join
 
 #### datasets for linking ####
 #add lake link file to link new keys to nhdids (to join with temp data)
@@ -54,7 +57,7 @@ lake_summ_fish_pres_qaqc[is.na(lake_summ_fish_pres_qaqc)] <- 0
 
 ### legacy land use land cover 
 file.list <- list.files("bluegill_data/backcast_lulc", pattern='*.xls', full.names = T) 
-df.list <- lapply(file.list, read_excel)
+df.list <- lapply(file.list, FUN = read_excel)
 names(df.list[[1]])
 df.list[1]
 year_names <- c(1938:1992)
@@ -99,9 +102,9 @@ historic_lulc <- historic_lulc %>%
 #join historical datasets 
 all_historical <- left_join(BLG_dropNA, lake_summary_qaqc, by= c('new_key', 'begin_date_year')) %>% 
                   left_join(lake_summ_fish_pres_qaqc, by= c('new_key', 'begin_date_year')) %>% 
-  left_join(LAGOSjoinIFR) %>% 
-  left_join(IFRLakes) %>% 
-  left_join(new_key_comid_translate) %>%
+ left_join(LAGOSjoinIFR, by= 'new_key') %>% 
+  left_join(IFRLakes, by= 'new_key') %>% 
+  left_join(new_key_comid_translate, by= 'new_key') %>%
   left_join(historic_lulc, by=c('lagoslakeid', 'begin_date_year' = 'year' )) %>% 
   dplyr::rename(year=begin_date_year, day = begin_date_day, Survey_Number = subject_id, AGE=age_group, mean_secchi_m = secchi_min_m, 
                 lmb=largemouth_bass ,pike=northern_pike,perch=yellow_perch)  %>% 
@@ -120,8 +123,8 @@ snt_blg <- read.csv("bluegill_data/snt_blg_ages_2002_2020.csv") %>%
   summarise_at(vars(LENGTH_IN), list(mean_length_in = mean)) %>% 
   ungroup() %>% 
   mutate(length_mean_mm = mean_length_in*25.4 ) %>%#convert to mm 
-  left_join(IFRLakes) %>% 
-  left_join(LAGOSjoinIFR)
+  left_join(IFRLakes, by= 'new_key') %>% 
+  left_join(LAGOSjoinIFR, by= 'new_key')
 
 nlcdyears <- c(2001,2006,2011,2016,2019)
 a <- as.numeric(snt_blg$year)
@@ -169,7 +172,7 @@ snt_secchi <- read.csv("bluegill_data/snt_secchi_2002_2020.csv") %>%
 all_snt<- left_join(snt_blg, snt_catch_data, by=c('new_key','year')) %>% 
           left_join(sntlulc, by=c('lagoslakeid','lulcyear' = "year")) %>% 
         left_join(snt_secchi, by=c('new_key','year' = 'Year')) %>% 
-  left_join(new_key_comid_translate) %>%
+  left_join(new_key_comid_translate, by= 'new_key') %>%
   dplyr::select(-c(mean_length_in, lulcyear)) %>% 
   mutate(type = 'contemporary') %>%  #add a column with the time period 
   mutate(perch = ifelse(perch >= 1, 1, 0), 
@@ -236,7 +239,7 @@ countypop_all<-rbind(countypop_1940, countypop_1950, countypop_1960, countypop_1
 
 ### need to make county all lowercase before join
 # join by decade and county name
-binded2<- left_join(binded, lake_depth_2021) %>% 
+binded2<- left_join(binded, lake_depth_2021, by= 'new_key') %>% 
   mutate(county = tolower(county)) %>% 
   left_join(lake_degree_days_year, by =c('nhdid', 'year')) %>% 
   left_join(countypop_all, by =c('decade' = 'Year', 'county' = "county")) %>% 
@@ -247,7 +250,7 @@ binded2<- left_join(binded, lake_depth_2021) %>%
          doy = yday(date) #day of year 
 ) 
 
-#creating a variable that is he average dd of the lifetime of the fish 
+#creating a variable that is the average dd of the lifetime of the fish 
 #DD has 3 columns nhdid, year, and DD 
 #take the sum of Degree Days of the equal nhdids AND the year before the year of the binded data AND all the years greater than the year - the age group THEN divide the sum DD by age  
 binded2$DD_mean <- NA #create a new column called "DD_mean"
@@ -262,7 +265,70 @@ for (i in 1: 14454) {
 summary(as.factor(binded2$AGE))
 model_data<-filter(binded2, AGE >=1 &  AGE <=8 )
 
-write.csv(model_data, "bluegill_data/model_data.csv", row.names = FALSE)
+#Add CPUE of trap/fyke
+#### historical trap/fyke catch data #### 
+fishc_data<-read.csv("bluegill_data/fishc_qaqc_added_lakes.csv")
+bluegill_historical<-read.csv("bluegill_data/model_data.csv")%>% 
+  filter(type == "historical") %>% 
+  distinct(new_key, year) #just get the lake and the year, don't need all of the ages 
+
+#try to match lakes and pull out trap/fyke observations 
+match<-inner_join(bluegill_historical, fishc_data, by = c('new_key', 'year' = 'begin_date_year')) %>% 
+  filter(type_gear1 == "trap" | type_gear2 == "trap" | type_gear3 == "trap" | type_gear4 == "trap" | 
+           type_gear1 == "fyke" | type_gear2 == "fyke" | type_gear3 == "fyke" | type_gear4 == "fyke" ) %>% 
+  filter(bluegill >0)
+
+#look at card images to determine effort 
+#write.csv(match, "/Users/katelynking/Desktop/fishc_bluegill.csv", row.names = FALSE)
+cpue_hist<-read.csv("bluegill_data/fishc_bluegill2.csv") %>% 
+  drop_na(cpue) %>% 
+  filter(cpue >=1 & cpue <=100) %>%  #remove two outliers 
+  mutate(new_key = ifelse(new_key == '1-Apr', '4-1', new_key)) %>%  #fix one new key that got changed to a date 
+  select(new_key, year, bluegill, effort_num_lifts) %>%
+  group_by(new_key, year) %>%
+  mutate(effort_num_lifts = as.numeric(as.character(effort_num_lifts))) %>% 
+  summarize_all(sum) %>% #sum across cards
+  mutate(cpue=round((bluegill/effort_num_lifts),1)
+  ) %>% 
+  select(new_key, year, cpue)
+  
+n_distinct(cpue_hist$new_key) #24 distinct lakes with cpue data 
+
+#### read in SNT CPUE data #### 
+#catch data for bluegill 
+snt_blg_catch <- read.csv("bluegill_data/snt_catch_data_mar2021.csv") %>% 
+  tidyr::pivot_wider(id_cols = c(NEW_KEY, Survey_Number, SURVEY_YEAR, GEAR),
+                     names_from = SPECIES,
+                     values_from = c(FISH_COUNT),
+                     values_fn = sum,
+                     values_fill = list(FISH_COUNT = 0))%>%
+  dplyr::rename(new_key=NEW_KEY) %>% 
+  dplyr::select(new_key, Survey_Number, SURVEY_YEAR, GEAR, BLG)
+
+#effort from snt
+snt_effort<- read.csv("bluegill_data/snt_effort_data.csv") %>% 
+  dplyr::select(NEW_KEY, Survey_Number, GEAR, EFFORT) %>% 
+  rename(new_key = NEW_KEY)
+
+#join catch and effort # chose only fyke and trap , effort in lifts 
+snt_blg_cpue<-left_join(snt_blg_catch, snt_effort,  by=c('new_key','Survey_Number', 'GEAR')) %>% 
+  filter(GEAR == "LMFYKE" | GEAR == "SMFYKE" | GEAR == "TRAPNET") %>% 
+  group_by(new_key, Survey_Number, SURVEY_YEAR) %>% 
+  select(-c('GEAR')) %>%
+  summarize_all(sum) %>% #sum across all gears 
+  mutate(cpue=round((BLG/EFFORT),1)
+         ) %>% 
+  select(new_key, Survey_Number, cpue)
+
+n_distinct(snt_blg_cpue$new_key) #463 distinct lakes with cpue data (some have multiple surveys)
+n_distinct(snt_blg_cpue$Survey_Number) 
+
+#join snt data by the survey number and join with historical by year and lake
+model_data_final<-left_join(model_data, snt_blg_cpue, by=c('new_key', 'Survey_Number')) %>% 
+  natural_join(cpue_hist, by=c('new_key', 'year'),  jointype = "LEFT")
+
+
+write.csv(model_data_final, "bluegill_data/model_data.csv", row.names = FALSE)
 
 #### FINAL PREDICTOR VARIABLES 15 variables not including blg density 
 #perch, lmb, pike, walleye, secchi_m,  urban, ag, forest, wetlands, year, doy, logcounty, logarea, logdepth, DD_mean
@@ -272,5 +338,4 @@ n_distinct(model_data$new_key)
 
 #summary stats 
 skimr::skim(model_data)
-
-#still need to figure out if we want CPUE of trap/fyke 
+  
