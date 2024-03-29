@@ -219,7 +219,7 @@ summary(lm(subset(binded, AGE == 8)[predset8,5] ~ predbrt8))
 
 
 #### combine all ages plots #### 
-cowplot::plot_grid(age1, age2, age3, age4, 
-                   age5, age6, age7, age8,
-                   ncol=4)
+
+
+
 
