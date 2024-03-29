@@ -325,7 +325,8 @@ n_distinct(snt_blg_cpue$Survey_Number)
 
 #join snt data by the survey number and join with historical by year and lake
 model_data_final<-left_join(model_data, snt_blg_cpue, by=c('new_key', 'Survey_Number')) %>% 
-  natural_join(cpue_hist, by=c('new_key', 'year'),  jointype = "LEFT")
+  natural_join(cpue_hist, by=c('new_key', 'year'),  jointype = "LEFT") %>% 
+  select(new_key, lagoslakeid, nhdid, Survey_Number, county, LAT_DD, LONG_DD, date, day, month, year, AGE, everything()) #reorder columns 
 
 
 #write.csv(model_data_final, "bluegill_data/model_data.csv", row.names = FALSE)
