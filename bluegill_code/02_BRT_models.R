@@ -8,6 +8,7 @@ library(vip) #for plotting
 #devtools::install_github("JBjouffray/ggBRT") # only need to install once
 library(ggBRT) #BRT plotting and summary statistics
 library(cowplot)
+library(tidyverse) #data manipulation
 
 ### read in data that was created from 01_data cleaning scripts # 
 binded<-read.csv("bluegill_data/model_data.csv")
@@ -114,16 +115,16 @@ ggPerformance(brt.a4)
 ggInfluence(brt.a4, main = "Age 4")
 
 #interaction
-brt.int4=gbm.interactions(brt.a4)
-brt.simp4 = gbm.simplify(brt.a4)
-
-#predict
-ni4=nrow(subset(binded, AGE == 4)) #number of rows in the data
-predset4=sample(1:ni4,100) #random draw of 100 lakes
-predbrt4=predict(brt.a4simp,subset(binded, AGE == 4)[predset4,xlist_simp4],n.trees=brt.a4simp$gbm.call$best.trees, type="response") #predictions from the model to the 100 lakes
-plot(predbrt4,subset(binded, AGE == 4)[predset4,5])
-
-summary(lm(subset(binded, AGE == 4)[predset4,5] ~ predbrt4))
+# brt.int4=gbm.interactions(brt.a4)
+# #brt.simp4 = gbm.simplify(brt.a4)
+# 
+# #predict
+# ni4=nrow(subset(binded, AGE == 4)) #number of rows in the data
+# predset4=sample(1:ni4,100) #random draw of 100 lakes
+# predbrt4=predict(brt.a4simp,subset(binded, AGE == 4)[predset4,xlist_simp4],n.trees=brt.a4simp$gbm.call$best.trees, type="response") #predictions from the model to the 100 lakes
+# plot(predbrt4,subset(binded, AGE == 4)[predset4,5])
+# 
+# #summary(lm(subset(binded, AGE == 4)[predset4,5] ~ predbrt4))
 
 
 ### Age 5 ####
@@ -137,16 +138,16 @@ ggPerformance(brt.a5)
 ggInfluence(brt.a5, main = "Age 5")
 
 #interaction
-brt.int5=gbm.interactions(brt.a5)
-brt.simp5 = gbm.simplify(brt.a5)
+# brt.int5=gbm.interactions(brt.a5)
+# brt.simp5 = gbm.simplify(brt.a5)
 
 #predict
-ni5=nrow(subset(binded, AGE == 5))
-predset5=sample(1:ni5,100) 
-predbrt5=predict(brt.a5simp,subset(binded, AGE == 5)[predset5,xlist_simp5],n.trees=brt.a5simp$gbm.call$best.trees, type="response") 
-plot(predbrt5,subset(binded, AGE == 5)[predset5,5])
-
-summary(lm(subset(binded, AGE == 5)[predset5,5] ~ predbrt5))
+# ni5=nrow(subset(binded, AGE == 5))
+# predset5=sample(1:ni5,100) 
+# predbrt5=predict(brt.a5simp,subset(binded, AGE == 5)[predset5,xlist_simp5],n.trees=brt.a5simp$gbm.call$best.trees, type="response") 
+# plot(predbrt5,subset(binded, AGE == 5)[predset5,5])
+# 
+# summary(lm(subset(binded, AGE == 5)[predset5,5] ~ predbrt5))
 
 
 ### Age 6 ####
@@ -160,16 +161,16 @@ ggPerformance(brt.a6)
 ggInfluence(brt.a6, main = "Age 6")
 
 #interactions
-brt.int6=gbm.interactions(brt.a6)
-brt.simp6 = gbm.simplify(brt.a6)
-
-#predict
-ni6=nrow(subset(binded, AGE == 6))
-predset6=sample(1:ni6,100) 
-predbrt6=predict(brt.a6simp,subset(binded, AGE == 6)[predset6,xlist_simp6],n.trees=brt.a6simp$gbm.call$best.trees, type="response") 
-plot(predbrt6,subset(binded, AGE == 6)[predset6,5])
-
-summary(lm(subset(binded, AGE == 6)[predset6,5] ~ predbrt6))
+# brt.int6=gbm.interactions(brt.a6)
+# brt.simp6 = gbm.simplify(brt.a6)
+# 
+# #predict
+# ni6=nrow(subset(binded, AGE == 6))
+# predset6=sample(1:ni6,100) 
+# predbrt6=predict(brt.a6simp,subset(binded, AGE == 6)[predset6,xlist_simp6],n.trees=brt.a6simp$gbm.call$best.trees, type="response") 
+# plot(predbrt6,subset(binded, AGE == 6)[predset6,5])
+# 
+# summary(lm(subset(binded, AGE == 6)[predset6,5] ~ predbrt6))
 
 
 ### Age 7 ####
@@ -183,16 +184,16 @@ ggPerformance(brt.a7)
 ggInfluence(brt.a7, main = "Age 7")
 
 #interaction
-brt.int7=gbm.interactions(brt.a7)
-brt.simp7 = gbm.simplify(brt.a7)
-
-#prediction
-ni7=nrow(subset(binded, AGE == 7))
-predset7=sample(1:ni7,100) 
-predbrt7=predict(brt.a7simp,subset(binded, AGE == 7)[predset7,xlist_simp7],n.trees=brt.a7simp$gbm.call$best.trees, type="response") 
-plot(predbrt7,subset(binded, AGE == 7)[predset7,5])
-
-summary(lm(subset(binded, AGE == 7)[predset7,5] ~ predbrt7))
+# brt.int7=gbm.interactions(brt.a7)
+# brt.simp7 = gbm.simplify(brt.a7)
+# 
+# #prediction
+# ni7=nrow(subset(binded, AGE == 7))
+# predset7=sample(1:ni7,100) 
+# predbrt7=predict(brt.a7simp,subset(binded, AGE == 7)[predset7,xlist_simp7],n.trees=brt.a7simp$gbm.call$best.trees, type="response") 
+# plot(predbrt7,subset(binded, AGE == 7)[predset7,5])
+# 
+# summary(lm(subset(binded, AGE == 7)[predset7,5] ~ predbrt7))
 
 
 ### Age 8 #### 
@@ -206,19 +207,674 @@ ggPerformance(brt.a8)
 ggInfluence(brt.a8, main = "Age 8")
 
 #interaction
-brt.int8=gbm.interactions(brt.a8)
-brt.simp8 = gbm.simplify(brt.a8)
-
-#prediction 
-ni8=nrow(subset(binded, AGE == 8))
-predset8=sample(1:ni8,100) 
-predbrt8=predict(brt.a8simp,subset(binded, AGE == 8)[predset8,xlist_simp8],n.trees=brt.a8simp$gbm.call$best.trees, type="response") 
-plot(predbrt8,subset(binded, AGE == 8)[predset8,5])
-
-summary(lm(subset(binded, AGE == 8)[predset8,5] ~ predbrt8))
+# brt.int8=gbm.interactions(brt.a8)
+# brt.simp8 = gbm.simplify(brt.a8)
+# 
+# #prediction 
+# ni8=nrow(subset(binded, AGE == 8))
+# predset8=sample(1:ni8,100) 
+# predbrt8=predict(brt.a8simp,subset(binded, AGE == 8)[predset8,xlist_simp8],n.trees=brt.a8simp$gbm.call$best.trees, type="response") 
+# plot(predbrt8,subset(binded, AGE == 8)[predset8,5])
+# 
+# summary(lm(subset(binded, AGE == 8)[predset8,5] ~ predbrt8))
 
 
 #### combine all ages plots #### 
+######Format fitted functions##################
+lepmac.response.matrix <- bind_rows(
+  bind_rows(
+    #age group 1
+    gbm::plot.gbm(brt.a1, i.var = "DD_mean", return.grid = TRUE) %>% 
+      rename(Predictor_Value = DD_mean) %>% 
+      mutate(Predictor_Name = "DD_mean",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "year", return.grid = TRUE) %>% 
+      rename(Predictor_Value = year) %>% 
+      mutate(Predictor_Name = "year",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "mean_secchi_m", return.grid = TRUE) %>% 
+      rename(Predictor_Value = mean_secchi_m) %>% 
+      mutate(Predictor_Name = "mean_secchi_m",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "urban", return.grid = TRUE) %>% 
+      rename(Predictor_Value = urban) %>% 
+      mutate(Predictor_Name = "urban",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "agriculture", return.grid = TRUE) %>% 
+      rename(Predictor_Value = agriculture) %>% 
+      mutate(Predictor_Name = "agriculture",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "forests", return.grid = TRUE) %>% 
+      rename(Predictor_Value = forests) %>% 
+      mutate(Predictor_Name = "forests",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "wetlands", return.grid = TRUE) %>% 
+      rename(Predictor_Value = wetlands) %>% 
+      mutate(Predictor_Name = "wetlands",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "doy", return.grid = TRUE) %>% 
+      rename(Predictor_Value = doy) %>% 
+      mutate(Predictor_Name = "doy",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "logdepth", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logdepth) %>% 
+      mutate(Predictor_Name = "logdepth",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "logarea", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logarea) %>% 
+      mutate(Predictor_Name = "logarea",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1, i.var = "logcounty", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logcounty) %>% 
+      mutate(Predictor_Name = "logcounty",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1,i.var = "cpue", return.grid = TRUE) %>% 
+      rename(Predictor_Value = cpue) %>% 
+      mutate(Predictor_Name = "cpue",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1,i.var = "walleye", return.grid = TRUE) %>% 
+      rename(Predictor_Value = walleye) %>% 
+      mutate(Predictor_Name = "walleye",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1,i.var = "pike", return.grid = TRUE) %>% 
+      rename(Predictor_Value = pike) %>% 
+      mutate(Predictor_Name = "pike",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1,i.var = "perch", return.grid = TRUE) %>% 
+      rename(Predictor_Value = perch) %>% 
+      mutate(Predictor_Name = "perch",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a1,i.var = "lmb", return.grid = TRUE) %>% 
+      rename(Predictor_Value = lmb) %>% 
+      mutate(Predictor_Name = "lmb",
+             y = scale(y))
+  ) %>% mutate(Age_Group = 1),
+  #add age group 2
+  bind_rows(
+    gbm::plot.gbm(brt.a2, i.var = "DD_mean", return.grid = TRUE) %>% 
+      rename(Predictor_Value = DD_mean) %>% 
+      mutate(Predictor_Name = "DD_mean",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "year", return.grid = TRUE) %>% 
+      rename(Predictor_Value = year) %>% 
+      mutate(Predictor_Name = "year",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "mean_secchi_m", return.grid = TRUE) %>% 
+      rename(Predictor_Value = mean_secchi_m) %>% 
+      mutate(Predictor_Name = "mean_secchi_m",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "urban", return.grid = TRUE) %>% 
+      rename(Predictor_Value = urban) %>% 
+      mutate(Predictor_Name = "urban",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "agriculture", return.grid = TRUE) %>% 
+      rename(Predictor_Value = agriculture) %>% 
+      mutate(Predictor_Name = "agriculture",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "forests", return.grid = TRUE) %>% 
+      rename(Predictor_Value = forests) %>% 
+      mutate(Predictor_Name = "forests",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "wetlands", return.grid = TRUE) %>% 
+      rename(Predictor_Value = wetlands) %>% 
+      mutate(Predictor_Name = "wetlands",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "doy", return.grid = TRUE) %>% 
+      rename(Predictor_Value = doy) %>% 
+      mutate(Predictor_Name = "doy",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "logdepth", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logdepth) %>% 
+      mutate(Predictor_Name = "logdepth",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "logarea", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logarea) %>% 
+      mutate(Predictor_Name = "logarea",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2, i.var = "logcounty", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logcounty) %>% 
+      mutate(Predictor_Name = "logcounty",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2,i.var = "cpue", return.grid = TRUE) %>% 
+      rename(Predictor_Value = cpue) %>% 
+      mutate(Predictor_Name = "cpue",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2,i.var = "walleye", return.grid = TRUE) %>% 
+      rename(Predictor_Value = walleye) %>% 
+      mutate(Predictor_Name = "walleye",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2,i.var = "pike", return.grid = TRUE) %>% 
+      rename(Predictor_Value = pike) %>% 
+      mutate(Predictor_Name = "pike",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2,i.var = "perch", return.grid = TRUE) %>% 
+      rename(Predictor_Value = perch) %>% 
+      mutate(Predictor_Name = "perch",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a2,i.var = "lmb", return.grid = TRUE) %>% 
+      rename(Predictor_Value = lmb) %>% 
+      mutate(Predictor_Name = "lmb",
+             y = scale(y))
+  ) %>% mutate(Age_Group = 2),
+  bind_rows(
+    #age group 3
+    gbm::plot.gbm(brt.a3, i.var = "DD_mean", return.grid = TRUE) %>% 
+      rename(Predictor_Value = DD_mean) %>% 
+      mutate(Predictor_Name = "DD_mean",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "year", return.grid = TRUE) %>% 
+      rename(Predictor_Value = year) %>% 
+      mutate(Predictor_Name = "year",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "mean_secchi_m", return.grid = TRUE) %>% 
+      rename(Predictor_Value = mean_secchi_m) %>% 
+      mutate(Predictor_Name = "mean_secchi_m",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "urban", return.grid = TRUE) %>% 
+      rename(Predictor_Value = urban) %>% 
+      mutate(Predictor_Name = "urban",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "agriculture", return.grid = TRUE) %>% 
+      rename(Predictor_Value = agriculture) %>% 
+      mutate(Predictor_Name = "agriculture",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "forests", return.grid = TRUE) %>% 
+      rename(Predictor_Value = forests) %>% 
+      mutate(Predictor_Name = "forests",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "wetlands", return.grid = TRUE) %>% 
+      rename(Predictor_Value = wetlands) %>% 
+      mutate(Predictor_Name = "wetlands",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "doy", return.grid = TRUE) %>% 
+      rename(Predictor_Value = doy) %>% 
+      mutate(Predictor_Name = "doy",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "logdepth", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logdepth) %>% 
+      mutate(Predictor_Name = "logdepth",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "logarea", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logarea) %>% 
+      mutate(Predictor_Name = "logarea",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3, i.var = "logcounty", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logcounty) %>% 
+      mutate(Predictor_Name = "logcounty",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3,i.var = "cpue", return.grid = TRUE) %>% 
+      rename(Predictor_Value = cpue) %>% 
+      mutate(Predictor_Name = "cpue",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3,i.var = "walleye", return.grid = TRUE) %>% 
+      rename(Predictor_Value = walleye) %>% 
+      mutate(Predictor_Name = "walleye",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3,i.var = "pike", return.grid = TRUE) %>% 
+      rename(Predictor_Value = pike) %>% 
+      mutate(Predictor_Name = "pike",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3,i.var = "perch", return.grid = TRUE) %>% 
+      rename(Predictor_Value = perch) %>% 
+      mutate(Predictor_Name = "perch",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a3,i.var = "lmb", return.grid = TRUE) %>% 
+      rename(Predictor_Value = lmb) %>% 
+      mutate(Predictor_Name = "lmb",
+             y = scale(y))
+  ) %>% mutate(Age_Group = 3),
+  bind_rows(
+    #age group 4
+    gbm::plot.gbm(brt.a4, i.var = "DD_mean", return.grid = TRUE) %>% 
+      rename(Predictor_Value = DD_mean) %>% 
+      mutate(Predictor_Name = "DD_mean",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "year", return.grid = TRUE) %>% 
+      rename(Predictor_Value = year) %>% 
+      mutate(Predictor_Name = "year",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "mean_secchi_m", return.grid = TRUE) %>% 
+      rename(Predictor_Value = mean_secchi_m) %>% 
+      mutate(Predictor_Name = "mean_secchi_m",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "urban", return.grid = TRUE) %>% 
+      rename(Predictor_Value = urban) %>% 
+      mutate(Predictor_Name = "urban",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "agriculture", return.grid = TRUE) %>% 
+      rename(Predictor_Value = agriculture) %>% 
+      mutate(Predictor_Name = "agriculture",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "forests", return.grid = TRUE) %>% 
+      rename(Predictor_Value = forests) %>% 
+      mutate(Predictor_Name = "forests",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "wetlands", return.grid = TRUE) %>% 
+      rename(Predictor_Value = wetlands) %>% 
+      mutate(Predictor_Name = "wetlands",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "doy", return.grid = TRUE) %>% 
+      rename(Predictor_Value = doy) %>% 
+      mutate(Predictor_Name = "doy",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "logdepth", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logdepth) %>% 
+      mutate(Predictor_Name = "logdepth",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "logarea", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logarea) %>% 
+      mutate(Predictor_Name = "logarea",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4, i.var = "logcounty", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logcounty) %>% 
+      mutate(Predictor_Name = "logcounty",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4,i.var = "cpue", return.grid = TRUE) %>% 
+      rename(Predictor_Value = cpue) %>% 
+      mutate(Predictor_Name = "cpue",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4,i.var = "walleye", return.grid = TRUE) %>% 
+      rename(Predictor_Value = walleye) %>% 
+      mutate(Predictor_Name = "walleye",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4,i.var = "pike", return.grid = TRUE) %>% 
+      rename(Predictor_Value = pike) %>% 
+      mutate(Predictor_Name = "pike",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4,i.var = "perch", return.grid = TRUE) %>% 
+      rename(Predictor_Value = perch) %>% 
+      mutate(Predictor_Name = "perch",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a4,i.var = "lmb", return.grid = TRUE) %>% 
+      rename(Predictor_Value = lmb) %>% 
+      mutate(Predictor_Name = "lmb",
+             y = scale(y))
+  ) %>% mutate(Age_Group = 4),
+  bind_rows(
+    #age group 5
+    gbm::plot.gbm(brt.a5, i.var = "DD_mean", return.grid = TRUE) %>% 
+      rename(Predictor_Value = DD_mean) %>% 
+      mutate(Predictor_Name = "DD_mean",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "year", return.grid = TRUE) %>% 
+      rename(Predictor_Value = year) %>% 
+      mutate(Predictor_Name = "year",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "mean_secchi_m", return.grid = TRUE) %>% 
+      rename(Predictor_Value = mean_secchi_m) %>% 
+      mutate(Predictor_Name = "mean_secchi_m",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "urban", return.grid = TRUE) %>% 
+      rename(Predictor_Value = urban) %>% 
+      mutate(Predictor_Name = "urban",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "agriculture", return.grid = TRUE) %>% 
+      rename(Predictor_Value = agriculture) %>% 
+      mutate(Predictor_Name = "agriculture",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "forests", return.grid = TRUE) %>% 
+      rename(Predictor_Value = forests) %>% 
+      mutate(Predictor_Name = "forests",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "wetlands", return.grid = TRUE) %>% 
+      rename(Predictor_Value = wetlands) %>% 
+      mutate(Predictor_Name = "wetlands",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "doy", return.grid = TRUE) %>% 
+      rename(Predictor_Value = doy) %>% 
+      mutate(Predictor_Name = "doy",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "logdepth", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logdepth) %>% 
+      mutate(Predictor_Name = "logdepth",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "logarea", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logarea) %>% 
+      mutate(Predictor_Name = "logarea",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5, i.var = "logcounty", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logcounty) %>% 
+      mutate(Predictor_Name = "logcounty",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5,i.var = "cpue", return.grid = TRUE) %>% 
+      rename(Predictor_Value = cpue) %>% 
+      mutate(Predictor_Name = "cpue",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5,i.var = "walleye", return.grid = TRUE) %>% 
+      rename(Predictor_Value = walleye) %>% 
+      mutate(Predictor_Name = "walleye",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5,i.var = "pike", return.grid = TRUE) %>% 
+      rename(Predictor_Value = pike) %>% 
+      mutate(Predictor_Name = "pike",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5,i.var = "perch", return.grid = TRUE) %>% 
+      rename(Predictor_Value = perch) %>% 
+      mutate(Predictor_Name = "perch",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a5,i.var = "lmb", return.grid = TRUE) %>% 
+      rename(Predictor_Value = lmb) %>% 
+      mutate(Predictor_Name = "lmb",
+             y = scale(y))
+  ) %>% mutate(Age_Group = 5),
+  bind_rows(
+    #age group 6
+    gbm::plot.gbm(brt.a6, i.var = "DD_mean", return.grid = TRUE) %>% 
+      rename(Predictor_Value = DD_mean) %>% 
+      mutate(Predictor_Name = "DD_mean",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "year", return.grid = TRUE) %>% 
+      rename(Predictor_Value = year) %>% 
+      mutate(Predictor_Name = "year",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "mean_secchi_m", return.grid = TRUE) %>% 
+      rename(Predictor_Value = mean_secchi_m) %>% 
+      mutate(Predictor_Name = "mean_secchi_m",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "urban", return.grid = TRUE) %>% 
+      rename(Predictor_Value = urban) %>% 
+      mutate(Predictor_Name = "urban",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "agriculture", return.grid = TRUE) %>% 
+      rename(Predictor_Value = agriculture) %>% 
+      mutate(Predictor_Name = "agriculture",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "forests", return.grid = TRUE) %>% 
+      rename(Predictor_Value = forests) %>% 
+      mutate(Predictor_Name = "forests",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "wetlands", return.grid = TRUE) %>% 
+      rename(Predictor_Value = wetlands) %>% 
+      mutate(Predictor_Name = "wetlands",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "doy", return.grid = TRUE) %>% 
+      rename(Predictor_Value = doy) %>% 
+      mutate(Predictor_Name = "doy",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "logdepth", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logdepth) %>% 
+      mutate(Predictor_Name = "logdepth",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "logarea", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logarea) %>% 
+      mutate(Predictor_Name = "logarea",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6, i.var = "logcounty", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logcounty) %>% 
+      mutate(Predictor_Name = "logcounty",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6,i.var = "cpue", return.grid = TRUE) %>% 
+      rename(Predictor_Value = cpue) %>% 
+      mutate(Predictor_Name = "cpue",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6,i.var = "walleye", return.grid = TRUE) %>% 
+      rename(Predictor_Value = walleye) %>% 
+      mutate(Predictor_Name = "walleye",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6,i.var = "pike", return.grid = TRUE) %>% 
+      rename(Predictor_Value = pike) %>% 
+      mutate(Predictor_Name = "pike",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6,i.var = "perch", return.grid = TRUE) %>% 
+      rename(Predictor_Value = perch) %>% 
+      mutate(Predictor_Name = "perch",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a6,i.var = "lmb", return.grid = TRUE) %>% 
+      rename(Predictor_Value = lmb) %>% 
+      mutate(Predictor_Name = "lmb",
+             y = scale(y))
+  ) %>% mutate(Age_Group = 6),
+  bind_rows(
+    #age group 7
+    gbm::plot.gbm(brt.a7, i.var = "DD_mean", return.grid = TRUE) %>% 
+      rename(Predictor_Value = DD_mean) %>% 
+      mutate(Predictor_Name = "DD_mean",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "year", return.grid = TRUE) %>% 
+      rename(Predictor_Value = year) %>% 
+      mutate(Predictor_Name = "year",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "mean_secchi_m", return.grid = TRUE) %>% 
+      rename(Predictor_Value = mean_secchi_m) %>% 
+      mutate(Predictor_Name = "mean_secchi_m",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "urban", return.grid = TRUE) %>% 
+      rename(Predictor_Value = urban) %>% 
+      mutate(Predictor_Name = "urban",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "agriculture", return.grid = TRUE) %>% 
+      rename(Predictor_Value = agriculture) %>% 
+      mutate(Predictor_Name = "agriculture",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "forests", return.grid = TRUE) %>% 
+      rename(Predictor_Value = forests) %>% 
+      mutate(Predictor_Name = "forests",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "wetlands", return.grid = TRUE) %>% 
+      rename(Predictor_Value = wetlands) %>% 
+      mutate(Predictor_Name = "wetlands",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "doy", return.grid = TRUE) %>% 
+      rename(Predictor_Value = doy) %>% 
+      mutate(Predictor_Name = "doy",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "logdepth", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logdepth) %>% 
+      mutate(Predictor_Name = "logdepth",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "logarea", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logarea) %>% 
+      mutate(Predictor_Name = "logarea",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7, i.var = "logcounty", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logcounty) %>% 
+      mutate(Predictor_Name = "logcounty",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7,i.var = "cpue", return.grid = TRUE) %>% 
+      rename(Predictor_Value = cpue) %>% 
+      mutate(Predictor_Name = "cpue",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7,i.var = "walleye", return.grid = TRUE) %>% 
+      rename(Predictor_Value = walleye) %>% 
+      mutate(Predictor_Name = "walleye",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7,i.var = "pike", return.grid = TRUE) %>% 
+      rename(Predictor_Value = pike) %>% 
+      mutate(Predictor_Name = "pike",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7,i.var = "perch", return.grid = TRUE) %>% 
+      rename(Predictor_Value = perch) %>% 
+      mutate(Predictor_Name = "perch",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a7,i.var = "lmb", return.grid = TRUE) %>% 
+      rename(Predictor_Value = lmb) %>% 
+      mutate(Predictor_Name = "lmb",
+             y = scale(y))
+  ) %>% mutate(Age_Group = 7),
+  bind_rows(
+    #age group 8
+    gbm::plot.gbm(brt.a8, i.var = "DD_mean", return.grid = TRUE) %>% 
+      rename(Predictor_Value = DD_mean) %>% 
+      mutate(Predictor_Name = "DD_mean",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "year", return.grid = TRUE) %>% 
+      rename(Predictor_Value = year) %>% 
+      mutate(Predictor_Name = "year",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "mean_secchi_m", return.grid = TRUE) %>% 
+      rename(Predictor_Value = mean_secchi_m) %>% 
+      mutate(Predictor_Name = "mean_secchi_m",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "urban", return.grid = TRUE) %>% 
+      rename(Predictor_Value = urban) %>% 
+      mutate(Predictor_Name = "urban",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "agriculture", return.grid = TRUE) %>% 
+      rename(Predictor_Value = agriculture) %>% 
+      mutate(Predictor_Name = "agriculture",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "forests", return.grid = TRUE) %>% 
+      rename(Predictor_Value = forests) %>% 
+      mutate(Predictor_Name = "forests",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "wetlands", return.grid = TRUE) %>% 
+      rename(Predictor_Value = wetlands) %>% 
+      mutate(Predictor_Name = "wetlands",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "doy", return.grid = TRUE) %>% 
+      rename(Predictor_Value = doy) %>% 
+      mutate(Predictor_Name = "doy",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "logdepth", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logdepth) %>% 
+      mutate(Predictor_Name = "logdepth",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "logarea", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logarea) %>% 
+      mutate(Predictor_Name = "logarea",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8, i.var = "logcounty", return.grid = TRUE) %>% 
+      rename(Predictor_Value = logcounty) %>% 
+      mutate(Predictor_Name = "logcounty",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8,i.var = "cpue", return.grid = TRUE) %>% 
+      rename(Predictor_Value = cpue) %>% 
+      mutate(Predictor_Name = "cpue",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8,i.var = "walleye", return.grid = TRUE) %>% 
+      rename(Predictor_Value = walleye) %>% 
+      mutate(Predictor_Name = "walleye",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8,i.var = "pike", return.grid = TRUE) %>% 
+      rename(Predictor_Value = pike) %>% 
+      mutate(Predictor_Name = "pike",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8,i.var = "perch", return.grid = TRUE) %>% 
+      rename(Predictor_Value = perch) %>% 
+      mutate(Predictor_Name = "perch",
+             y = scale(y)),
+    gbm::plot.gbm(brt.a8,i.var = "lmb", return.grid = TRUE) %>% 
+      rename(Predictor_Value = lmb) %>% 
+      mutate(Predictor_Name = "lmb",
+             y = scale(y))
+  ) %>% mutate(Age_Group = 8)
+) %>% mutate(Age_Group = as.factor(Age_Group),
+             Predictor_Name = case_when(
+               Predictor_Name == "agriculture" ~ "Agriculture",
+               Predictor_Name == "year" ~ "Year",
+               Predictor_Name == "DD_mean" ~ "Degree Days",
+               Predictor_Name == "doy" ~ "Day of Year",
+               Predictor_Name == "forests" ~ "Forests",
+               Predictor_Name == "logarea" ~ "Lake Area",
+               Predictor_Name == "logcounty" ~ "County Population",
+               Predictor_Name == "logdepth" ~ "Lake Depth",
+               Predictor_Name == "mean_secchi_m" ~ "Secchi Depth",
+               Predictor_Name == "month" ~ "Month",
+               Predictor_Name == "urban" ~ "Urban",
+               Predictor_Name == "wetlands" ~ "Wetlands",
+               Predictor_Name == "cpue" ~ "Bluegill CPUE",
+               Predictor_Name == "walleye" ~ "Walleye CPUE",
+               Predictor_Name == "pike" ~ "Northern Pike CPUE",
+               Predictor_Name == "perch" ~ "Yellow Perch CPUE",
+               Predictor_Name == "lmb" ~ "Largemouth Bass CPUE",
+               T ~ Predictor_Name
+             ))
+
+#######Format relative influence#############################
+
+lepmac.rel.inf <- bind_rows(
+  brt.a1$contributions %>% mutate(Age_Group = 1),
+  brt.a2$contributions %>% mutate(Age_Group = 2),
+  brt.a3$contributions %>% mutate(Age_Group = 3),
+  brt.a4$contributions %>% mutate(Age_Group = 4),
+  brt.a5$contributions %>% mutate(Age_Group = 5),
+  brt.a6$contributions %>% mutate(Age_Group = 6),
+  brt.a7$contributions %>% mutate(Age_Group = 7),
+  brt.a8$contributions %>% mutate(Age_Group = 8)
+) %>% 
+  mutate(Age_Group = as.factor(Age_Group)) %>% 
+  mutate(Predictor_Name = case_when(
+    var == "agriculture" ~ "Agriculture",
+    var == "year" ~ "Year",
+    var == "DD_mean" ~ "Degree Days",
+    var == "doy" ~ "Day of Year",
+    var == "forests" ~ "Forests",
+    var == "logarea" ~ "Lake Area",
+    var == "logcounty" ~ "County Population",
+    var == "logdepth" ~ "Lake Depth",
+    var == "mean_secchi_m" ~ "Secchi Depth",
+    var == "month" ~ "Month",
+    var == "urban" ~ "Urban",
+    var == "wetlands" ~ "Wetlands",
+    var == "cpue" ~ "Bluegill CPUE",
+    var == "walleye" ~ "Walleye CPUE",
+    var == "pike" ~ "Northern Pike CPUE",
+    var == "perch" ~ "Yellow Perch CPUE",
+    var == "lmb" ~ "Largemouth Bass CPUE",
+  )) %>% 
+  select(-var) %>% 
+  mutate(`Variable Type` = case_when(
+    Predictor_Name %in% c("Agriculture", "Forests", "Urban", "Wetlands") ~ "Land Cover",
+    Predictor_Name %in% c("Degree Days", "Latitude", "Surface Temperature") ~ "Climate",
+    Predictor_Name %in% c("Year", "Day of Year", "Month") ~ "Temporal",
+    Predictor_Name %in% c("Lake Area", "Lake Depth", "Secchi Depth", "County Population") ~ "Lake Attributes",
+    Predictor_Name %in% c("Bluegill CPUE", "Walleye CPUE", "Northern Pike CPUE", "Yellow Perch CPUE", "Largemouth Bass CPUE") ~ "Biotic"
+  )
+  )
+
+mean.rel.inf <- lepmac.rel.inf %>% 
+  group_by(Predictor_Name) %>% 
+  summarise(mean_rel_inf = mean(rel.inf)) 
+
+response.matrix.rel.inf <- lepmac.response.matrix %>% 
+  left_join(mean.rel.inf) %>% 
+  mutate(Predictor_Name = fct_reorder(Predictor_Name, desc(mean_rel_inf)))
+
+
+
+#Plots##############################################
+#-------Partial dependency plot-------------------
+
+(partial.plot <- ggplot(response.matrix.rel.inf, aes(x = Predictor_Value, y = y, color = Age_Group))+
+    geom_line()+
+    facet_wrap(~Predictor_Name, scales = "free")+
+    labs(y = "Fitted Function", x = "Predictor Values")+
+    scale_color_viridis_d()+
+    theme_bw()
+)
+
+ggsave(filename = "~/GitHub/bluegill_growth/Figures/partial_dependency.tiff",
+       partial.plot,
+       dpi = 300,
+       width = 200,
+       height = 150,
+       units = "mm")
+
+
+###-------Relative influence plot-------------------------------
+(rel.inf.plot <- ggplot(lepmac.rel.inf, aes(x = fct_reorder(Predictor_Name, rel.inf), 
+                                             y = rel.inf, fill = `Variable Type`))+
+    geom_bar(stat = "identity")+
+    geom_hline(yintercept = (1/length(xx.list)*100))+
+    facet_wrap(~Age_Group, scales = "free_x")+
+    scale_fill_viridis_d(direction = -1)+
+    labs(y = "Relative Influence", x = "Variable Name")+
+    scale_y_continuous(expand = c(0,0))+
+    coord_flip()+
+    theme_bw()+
+    theme(
+      axis.text.y = element_text(size = 6)
+    )
+  
+)
+
+ggsave(filename = "~/GitHub/bluegill_growth/Figures/rel_inf.tiff",
+       rel.inf.plot,
+       dpi = 300,
+       width = 200,
+       height = 150,
+       units = "mm")
+
 
 
 
