@@ -209,6 +209,19 @@ lake_degree_days_year <- read.csv("bluegill_data/lake_degree_days_year.csv")%>%
     values_to = "dd_year") %>% 
   mutate(year = as.integer(as.character(year)))
 
+#* surface temperature ####
+surface_temp<-read.csv("bluegill_data//lake_surface_temp.csv") %>%
+  group_by(IHDLKID) %>%
+  slice_max(HECTARES) %>% 
+  rename(nhdid = IHDLKID)%>% 
+  pivot_longer(                 #this makes all of the years into rows instead of columns 
+    cols= starts_with("TAVE_"),
+    names_to = "year", 
+    names_prefix = "TAVE_",
+    values_to = "surf_temp_year") %>% 
+  mutate(year = as.integer(as.character(year))) %>% 
+  select(nhdid, year, surf_temp_year) %>% 
+  ungroup()
 
 #* census data ####
 countypop_1940 <- read.csv("bluegill_data/Census_Data_County/R13037017_SL050.csv") %>%
@@ -239,9 +252,10 @@ countypop_all<-rbind(countypop_1940, countypop_1950, countypop_1960, countypop_1
 
 ### need to make county all lowercase before join
 # join by decade and county name
-binded2<- left_join(binded, lake_depth_2021, by= 'new_key') %>% 
+binded2<- left_join(binded, lake_depth_2021, by = 'new_key') %>% 
   mutate(county = tolower(county)) %>% 
   left_join(lake_degree_days_year, by =c('nhdid', 'year')) %>% 
+  left_join(surface_temp, by = c("nhdid", "year")) %>% 
   left_join(countypop_all, by =c('decade' = 'Year', 'county' = "county")) %>% 
   mutate(logdepth = log(depth_m),  #log transform 
          logarea = log(area_ha), 
@@ -257,7 +271,7 @@ binded2$DD_mean <- NA #create a new column called "DD_mean"
 
 for (i in 1: 14454) {
   
-  binded2[i,33] <- sum(lake_degree_days_year[lake_degree_days_year[,1]==binded2[i,17] & lake_degree_days_year[,2] < binded2[i,2] & lake_degree_days_year[,2] >= (binded[i,2]-binded[i,4]) ,3]) / binded[i,4]
+  binded2[i,34] <- sum(lake_degree_days_year[lake_degree_days_year[,1]==binded2[i,17] & lake_degree_days_year[,2] < binded2[i,2] & lake_degree_days_year[,2] >= (binded[i,2]-binded[i,4]) ,3]) / binded[i,4]
   
 }
 
