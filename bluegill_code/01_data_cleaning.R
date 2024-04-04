@@ -198,16 +198,18 @@ dplyr::rename(new_key = New_Key) %>%
 
 #*lake degree days #### 
 lake_degree_days_year <- read.csv("bluegill_data/lake_degree_days_year.csv")%>%
-  dplyr::select(-c(HECTARES, FETCH_M, ZMAX_M, ZAVE_M, D)) %>% 
+  dplyr::select(-c( FETCH_M, ZMAX_M, ZAVE_M, D)) %>% 
   group_by(IHDLKID) %>%
-  summarise_all( mean) %>% #some nhdids have more than one row... so take the mean 
+  slice_max(HECTARES) %>% #some nhdids have more than one row... so take the larger waterbody
   dplyr::rename(nhdid = IHDLKID)%>% 
   pivot_longer( #pivot so that year is its own column 
     cols= starts_with("DD_"),
     names_to = "year", 
     names_prefix = "DD_",
     values_to = "dd_year") %>% 
-  mutate(year = as.integer(as.character(year)))
+  mutate(year = as.integer(as.character(year)))%>% 
+  dplyr::select(-c( HECTARES)) %>% 
+  ungroup()
 
 #* surface temperature ####
 surface_temp<-read.csv("bluegill_data//lake_surface_temp.csv") %>%
@@ -264,7 +266,7 @@ binded2<- left_join(binded, lake_depth_2021, by = 'new_key') %>%
          doy = yday(date) #day of year 
 ) 
 
-#creating a variable that is the average dd of the lifetime of the fish 
+#*average dd of the lifetime of the fish ####
 #DD has 3 columns nhdid, year, and DD 
 #take the sum of Degree Days of the equal nhdids AND the year before the year of the binded data AND all the years greater than the year - the age group THEN divide the sum DD by age  
 binded2$DD_mean <- NA #create a new column called "DD_mean"
@@ -277,7 +279,8 @@ for (i in 1: 14454) {
 
 #filter out age 0, and 9-18 
 summary(as.factor(binded2$AGE))
-model_data<-filter(binded2, AGE >=1 &  AGE <=8 )
+model_data<-filter(binded2, AGE >=1 &  AGE <=8 ) %>% 
+  mutate(DD_mean = ifelse(DD_mean == 0, NA, DD_mean))
 
 #Add CPUE of trap/fyke
 #### historical trap/fyke catch data #### 
@@ -346,11 +349,14 @@ model_data_final<-left_join(model_data, snt_blg_cpue, by=c('new_key', 'Survey_Nu
 #write.csv(model_data_final, "bluegill_data/model_data.csv", row.names = FALSE)
 
 #### FINAL PREDICTOR VARIABLES 16 variables
-#perch, lmb, pike, walleye, secchi_m,  urban, ag, forest, wetlands, year, doy, logcounty, logarea, logdepth, DD_mean, cpue
+#perch, lmb, pike, walleye, secchi_m,  urban, ag, forest, wetlands, doy, logcounty, logarea, logdepth, DD_mean, cpue, surface_temp
 
-#number of unique lakes 
-n_distinct(model_data_final$new_key) 
+summary_data<-read.csv("bluegill_data/model_data.csv") %>% 
+  select('new_key', 'year', 'mean_secchi_m', 'perch', 'lmb', 'pike', 'walleye',  
+'urban', 'agriculture', 'forests', 'wetlands', 'logdepth', 
+'logarea', 'logcounty', 'doy', 'DD_mean', 'cpue', 'surf_temp_year') %>% 
+  distinct(new_key, year, .keep_all = TRUE)
 
 #summary stats 
-skimr::skim(model_data_final)
+skimr::skim(summary_data)
   
