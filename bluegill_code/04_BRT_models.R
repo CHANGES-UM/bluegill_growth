@@ -832,7 +832,13 @@ mean.rel.inf <- lepmac.rel.inf %>%
 
 response.matrix.rel.inf <- lepmac.response.matrix %>% 
   left_join(mean.rel.inf) %>% 
-  mutate(Predictor_Name = fct_reorder(Predictor_Name, desc(mean_rel_inf)))
+  mutate(Predictor_Name = fct_relevel(Predictor_Name, 
+                                      c("County Population", "Lake Depth",
+                                        "Degree Days", "Day of Year", "Lake Area",
+                                        "Surface Temperature", "Wetlands", "Bluegill CPUE",
+                                        "Forests", "Agriculture", "Urban", "Secchi Depth",
+                                        "Walleye", "Northern Pike", "Yellow Perch",
+                                        "Largemouth Bass")))
 
 
 

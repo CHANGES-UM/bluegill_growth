@@ -1,4 +1,4 @@
-Age,Total Deviance,Residual Deviance,Correlation,Per. Expl.,cvDeviance,cvCorrelation,cvPer. Expl.
+Age,Total Deviance,Residual Deviance,Correlation,Per. Expl.,CV Deviance,CV Correlation,CV Per. Expl.
 1,692.80,249.11,0.81,64.04,367.04,0.69,47.02
 2,633.57,282.21,0.76,55.46,427.22,0.57,32.57
 3,704.15,304.08,0.78,56.82,501.38,0.54,28.80

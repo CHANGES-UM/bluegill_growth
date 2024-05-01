@@ -1,7 +1,7 @@
-"","Parameter","Eta2_partial","CI","CI_low","CI_high","Interpretation"
-"1","year",0.0115548669322629,0.95,0.00848668584691176,1,"very small"
-"2","AGE",0.753014948704127,0.95,0.770310882599826,1,"large"
-"3","logarea",0.000992428187550054,0.95,0.000254601673728048,1,"very small"
-"4","logdepth",0.00104803451102257,0.95,0.000283166028467938,1,"very small"
-"5","doy",0.0737326757970388,0.95,0.0662056716027033,1,"small"
-"6","year:AGE",0.0780358818603263,0.95,0.0698768880037376,1,"small"
+Parameter,Partial Eta2,CI,CI lower limit,CI upper limit,Interpretation
+Year,0.012,0.95,0.008,1,very small
+Age,0.753,0.95,0.770,1,large
+Log Area,0.001,0.95,0.000,1,very small
+Log Depth,0.001,0.95,0.000,1,very small
+Day of Year,0.074,0.95,0.066,1,small
+Year:Age,0.078,0.95,0.070,1,small
