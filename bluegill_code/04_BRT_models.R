@@ -16,11 +16,11 @@ binded<-read.csv("bluegill_data/model_data.csv") %>%
 
 #### BRT models for individual ages #### 
 
-#set list of variables (16 predictors)
-##year, Secchi, perch, lmb, pike, walleye,  urban, ag, forest, wetlands, logdepth, logarea, logcounty, doy, DD_mean, cpue
+#set list of variables (15 predictors)
+##year, Secchi, perch, lmb, pike, walleye,  urban, ag, forest, wetlands, logdepth, logarea, doy, DD_mean, cpue
 xx.list <- c('mean_secchi_m', 'perch', 'lmb', 'pike', 'walleye',  
              'urban', 'agriculture', 'forests', 'wetlands', 'logdepth', 
-             'logarea', 'logcounty', 'doy', 'DD_mean', 'cpue', 'surf_temp_year')
+             'logarea', 'doy', 'DD_mean', 'cpue', 'surf_temp_year')
 
 ### AGE1 ####
 brt.a1 = gbm.step(data = subset(binded, AGE == 1), gbm.x = xx.list, gbm.y = 'length_mean_mm', family = "gaussian", 
@@ -223,7 +223,7 @@ ggInfluence(brt.a8, main = "Age 8")
 
 
 #### combine all ages plots #### 
-######Format fitted functions##################
+#*Format fitted functions#######
 lepmac.response.matrix <- bind_rows(
   bind_rows(
     #age group 1
@@ -262,10 +262,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a1, i.var = "logarea", return.grid = TRUE) %>% 
       rename(Predictor_Value = logarea) %>% 
       mutate(Predictor_Name = "logarea",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a1, i.var = "logcounty", return.grid = TRUE) %>% 
-      rename(Predictor_Value = logcounty) %>% 
-      mutate(Predictor_Name = "logcounty",
              y = scale(y)),
     gbm::plot.gbm(brt.a1,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
@@ -330,10 +326,6 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = logarea) %>% 
       mutate(Predictor_Name = "logarea",
              y = scale(y)),
-    gbm::plot.gbm(brt.a2, i.var = "logcounty", return.grid = TRUE) %>% 
-      rename(Predictor_Value = logcounty) %>% 
-      mutate(Predictor_Name = "logcounty",
-             y = scale(y)),
     gbm::plot.gbm(brt.a2,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
@@ -396,10 +388,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a3, i.var = "logarea", return.grid = TRUE) %>% 
       rename(Predictor_Value = logarea) %>% 
       mutate(Predictor_Name = "logarea",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a3, i.var = "logcounty", return.grid = TRUE) %>% 
-      rename(Predictor_Value = logcounty) %>% 
-      mutate(Predictor_Name = "logcounty",
              y = scale(y)),
     gbm::plot.gbm(brt.a3,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
@@ -464,10 +452,6 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = logarea) %>% 
       mutate(Predictor_Name = "logarea",
              y = scale(y)),
-    gbm::plot.gbm(brt.a4, i.var = "logcounty", return.grid = TRUE) %>% 
-      rename(Predictor_Value = logcounty) %>% 
-      mutate(Predictor_Name = "logcounty",
-             y = scale(y)),
     gbm::plot.gbm(brt.a4,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
@@ -530,10 +514,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a5, i.var = "logarea", return.grid = TRUE) %>% 
       rename(Predictor_Value = logarea) %>% 
       mutate(Predictor_Name = "logarea",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a5, i.var = "logcounty", return.grid = TRUE) %>% 
-      rename(Predictor_Value = logcounty) %>% 
-      mutate(Predictor_Name = "logcounty",
              y = scale(y)),
     gbm::plot.gbm(brt.a5,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
@@ -598,10 +578,6 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = logarea) %>% 
       mutate(Predictor_Name = "logarea",
              y = scale(y)),
-    gbm::plot.gbm(brt.a6, i.var = "logcounty", return.grid = TRUE) %>% 
-      rename(Predictor_Value = logcounty) %>% 
-      mutate(Predictor_Name = "logcounty",
-             y = scale(y)),
     gbm::plot.gbm(brt.a6,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
@@ -664,10 +640,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a7, i.var = "logarea", return.grid = TRUE) %>% 
       rename(Predictor_Value = logarea) %>% 
       mutate(Predictor_Name = "logarea",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a7, i.var = "logcounty", return.grid = TRUE) %>% 
-      rename(Predictor_Value = logcounty) %>% 
-      mutate(Predictor_Name = "logcounty",
              y = scale(y)),
     gbm::plot.gbm(brt.a7,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
@@ -732,10 +704,6 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = logarea) %>% 
       mutate(Predictor_Name = "logarea",
              y = scale(y)),
-    gbm::plot.gbm(brt.a8, i.var = "logcounty", return.grid = TRUE) %>% 
-      rename(Predictor_Value = logcounty) %>% 
-      mutate(Predictor_Name = "logcounty",
-             y = scale(y)),
     gbm::plot.gbm(brt.a8,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
@@ -768,7 +736,6 @@ lepmac.response.matrix <- bind_rows(
                Predictor_Name == "doy" ~ "Day of Year",
                Predictor_Name == "forests" ~ "Forests",
                Predictor_Name == "logarea" ~ "Lake Area",
-               Predictor_Name == "logcounty" ~ "County Population",
                Predictor_Name == "logdepth" ~ "Lake Depth",
                Predictor_Name == "mean_secchi_m" ~ "Secchi Depth",
                Predictor_Name == "month" ~ "Month",
@@ -783,7 +750,7 @@ lepmac.response.matrix <- bind_rows(
                T ~ Predictor_Name
              ))
 
-#######Format relative influence#############################
+#*Format relative influence###########
 
 lepmac.rel.inf <- bind_rows(
   brt.a1$contributions %>% mutate(Age_Group = 1),
@@ -802,7 +769,6 @@ lepmac.rel.inf <- bind_rows(
     var == "doy" ~ "Day of Year",
     var == "forests" ~ "Forests",
     var == "logarea" ~ "Lake Area",
-    var == "logcounty" ~ "County Population",
     var == "logdepth" ~ "Lake Depth",
     var == "mean_secchi_m" ~ "Secchi Depth",
     var == "month" ~ "Month",
@@ -820,7 +786,7 @@ lepmac.rel.inf <- bind_rows(
     Predictor_Name %in% c("Agriculture", "Forests", "Urban", "Wetlands") ~ "Land Cover",
     Predictor_Name %in% c("Degree Days", "Surface Temperature") ~ "Climate",
     Predictor_Name %in% c("Day of Year") ~ "Temporal",
-    Predictor_Name %in% c("Lake Area", "Lake Depth", "Secchi Depth", "County Population") ~ "Lake Attributes",
+    Predictor_Name %in% c("Lake Area", "Lake Depth", "Secchi Depth") ~ "Lake Attributes",
     Predictor_Name %in% c("Bluegill CPUE", "Walleye", "Northern Pike", "Yellow Perch", "Largemouth Bass") ~ "Biotic"
   )
   )
@@ -833,10 +799,9 @@ mean.rel.inf <- lepmac.rel.inf %>%
 response.matrix.rel.inf <- lepmac.response.matrix %>% 
   left_join(mean.rel.inf) %>% 
   mutate(Predictor_Name = fct_relevel(Predictor_Name, 
-                                      c("County Population", "Lake Depth",
-                                        "Degree Days", "Day of Year", "Lake Area",
-                                        "Surface Temperature", "Wetlands", "Bluegill CPUE",
-                                        "Forests", "Agriculture", "Urban", "Secchi Depth",
+                                      c( "Day of Year","Degree Days", "Lake Depth",  "Surface Temperature",
+                                         "Lake Area", "Wetlands", "Forests", "Agriculture",
+                                         "Bluegill CPUE", "Urban", "Secchi Depth",
                                         "Walleye", "Northern Pike", "Yellow Perch",
                                         "Largemouth Bass")))
 
@@ -860,7 +825,7 @@ response.matrix.rel.inf <- lepmac.response.matrix %>%
    )
 )
 
-ggsave(filename = "~/GitHub/bluegill_growth/Figures/partial_dependency.tiff",
+ggsave(filename = "Figures/partial_dependency.tiff",
        partial.plot,
        dpi = 300,
        width = 200,
