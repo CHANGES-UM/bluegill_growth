@@ -32,7 +32,6 @@ LAGOSjoinIFR <- read.csv("bluegill_data/lagos_join_ifr.csv") %>%
   dplyr::rename(lagoslakeid = lagoslakei) %>% 
   distinct(new_key, .keep_all = TRUE)
 
-#snt_lagoslink <- read_excel("bluegill_data/snt_lagoslink.xls") #? ignore for now   - the same as above? -apparently i gave this to her
 
 #### historical datasets ####
 BLG_dropNA <- read.csv("bluegill_data/all_grow_21NOV2023.csv") %>% 
@@ -42,10 +41,23 @@ BLG_dropNA <- read.csv("bluegill_data/all_grow_21NOV2023.csv") %>%
   dplyr:: select(new_key, begin_date_year, begin_date_month, begin_date_day, age_group, length_mean_mm, county, subject_id)
 BLG_dropNA$month <- match(BLG_dropNA$begin_date_month,month.name)
 
-#get Secchi 
+#*get Secchi ####
 lake_summary_qaqc <- read.csv("bluegill_data/lake_summary_qaqc.csv") %>% 
   dplyr::select(new_key, begin_date_year, secchi_min_m)%>% 
   distinct(new_key, begin_date_year, .keep_all = TRUE)
+
+#*get lake depth ####
+lake_depth <- read.csv("bluegill_data/lake_summary_qaqc.csv") %>% 
+  mutate(max_depth_max_m = ifelse(is.na(max_depth_max_m), max_depth_min_m, max_depth_max_m) #use max depth but fill in with min depth 
+  )%>% 
+  dplyr::select(new_key, max_depth_max_m)%>% 
+  drop_na(new_key) %>% 
+  drop_na(max_depth_max_m) %>% 
+  group_by(new_key) %>%
+  slice_max(max_depth_max_m) %>% #some duplicates, keep deepest measure 
+  ungroup() %>% 
+  distinct(new_key, .keep_all = TRUE) %>%  #some duplicates with ties 
+  rename(depth_m = max_depth_max_m)
 
 #get pres/abs of other fishes 
 lake_summ_fish_pres_qaqc <- read.csv("bluegill_data/lake_summ_fish_pres_qaqc.csv") %>% 
@@ -131,7 +143,7 @@ a <- as.numeric(snt_blg$year)
 b <- nlcdyears
 snt_blg$lulcyear <- sapply(a, function(a, b) {b[which.min(abs(a-b))]}, b)
 
-#catch data to include perch, walleye, pike, lmb 
+#*catch data to include perch, walleye, pike, lmb ####
 snt_catch_data <- read.csv("bluegill_data/snt_catch_data_mar2021.csv") %>% 
   tidyr::pivot_wider(id_cols = c(NEW_KEY, SURVEY_YEAR, COUNTY),
                      names_from = SPECIES,
@@ -147,7 +159,7 @@ snt_catch_data <- read.csv("bluegill_data/snt_catch_data_mar2021.csv") %>%
                 county = COUNTY) %>% 
   dplyr::select(new_key, year, lmb, pike, perch, walleye, county)
 
-#*predictor variables #### 
+#*lulc#### 
 sntlulc <- read.csv("bluegill_data/sntlulc.csv") %>% #ask Elise where this came from
     mutate(urban = Developed, 
        agriculture =Cultivated_Crops+ Hay_Pasture + Herbaceous, 
@@ -162,6 +174,7 @@ sntlulc <- read.csv("bluegill_data/sntlulc.csv") %>% #ask Elise where this came 
   dplyr::select(lagoslakei, Year, urban2, agriculture2, forests2, wetlands2) %>% 
   dplyr::rename(lagoslakeid = lagoslakei, year = Year , urban = urban2, agriculture =agriculture2, forests = forests2, wetlands = wetlands2)
 
+#*snt secchi ####
 snt_secchi <- read.csv("bluegill_data/snt_secchi_2002_2020.csv") %>% 
   dplyr::rename(new_key = New_Key) %>% 
   dplyr::mutate(secchi_m = SECCHI_FT/3.281) %>% 
@@ -191,10 +204,19 @@ binded$decade <- round(binded$year/10)*10
 #### data for both datasets ####
 #* lake depth and area ####
 lake_depth_2021 <- read.csv("bluegill_data/lake_depth_2021.csv") %>% 
-dplyr::rename(new_key = New_Key) %>% 
+dplyr::rename(new_key = New_Key ) %>% 
   dplyr::mutate(depth_m = MeanDepth_ft/3.281, 
                 area_ha = Area_ac/2.471) %>% 
   dplyr::select(new_key,area_ha, depth_m)
+
+#add area for other lakes 
+lake_area <- read.csv("bluegill_data/lake_degree_days_year.csv")%>%
+  select(IHDLKID, HECTARES) %>% 
+  dplyr::rename(nhdid = IHDLKID, area_ha =HECTARES)%>%
+  group_by(nhdid) %>%
+  slice_max(area_ha) %>% 
+  ungroup()
+
 
 #*lake degree days #### 
 lake_degree_days_year <- read.csv("bluegill_data/lake_degree_days_year.csv")%>%
@@ -252,13 +274,14 @@ countypop_all<-rbind(countypop_1940, countypop_1950, countypop_1960, countypop_1
   mutate(county = tolower(Area.Name)) %>% 
   dplyr::select(-c(Area.Name))
 
-### need to make county all lowercase before join
-# join by decade and county name
+#*join all data tables ####
 binded2<- left_join(binded, lake_depth_2021, by = 'new_key') %>% 
-  mutate(county = tolower(county)) %>% 
+  mutate(county = tolower(county)) %>% # need to make county all lowercase before join
   left_join(lake_degree_days_year, by =c('nhdid', 'year')) %>% 
   left_join(surface_temp, by = c("nhdid", "year")) %>% 
-  left_join(countypop_all, by =c('decade' = 'Year', 'county' = "county")) %>% 
+  left_join(countypop_all, by =c('decade' = 'Year', 'county' = "county")) %>% # join by decade and county name
+  natural_join(lake_area, by='nhdid', jointype="LEFT") %>% #join other area data
+  natural_join(lake_depth, by='new_key', jointype="LEFT") %>% #join other depth data
   mutate(logdepth = log(depth_m),  #log transform 
          logarea = log(area_ha), 
          logcounty = log(as.numeric(Total.Population)), 
@@ -268,12 +291,13 @@ binded2<- left_join(binded, lake_depth_2021, by = 'new_key') %>%
 
 #*average dd of the lifetime of the fish ####
 #DD has 3 columns nhdid, year, and DD 
+#binded2 using nhdid [18], year [28], and age [2]
 #take the sum of Degree Days of the equal nhdids AND the year before the year of the binded data AND all the years greater than the year - the age group THEN divide the sum DD by age  
 binded2$DD_mean <- NA #create a new column called "DD_mean"
 
 for (i in 1: 14454) {
   
-  binded2[i,34] <- sum(lake_degree_days_year[lake_degree_days_year[,1]==binded2[i,17] & lake_degree_days_year[,2] < binded2[i,2] & lake_degree_days_year[,2] >= (binded[i,2]-binded[i,4]) ,3]) / binded[i,4]
+  binded2[i,34] <- sum(lake_degree_days_year[lake_degree_days_year[,1]==binded2[i,18] & lake_degree_days_year[,2] < binded2[i,28] & lake_degree_days_year[,2] >= (binded2[i,28]-binded2[i,2]) ,3]) / binded2[i,2]
   
 }
 
@@ -285,7 +309,7 @@ model_data<-filter(binded2, AGE >=1 &  AGE <=8 ) %>%
 #Add CPUE of trap/fyke
 #### historical trap/fyke catch data #### 
 fishc_data<-read.csv("bluegill_data/fishc_qaqc_added_lakes.csv")
-bluegill_historical<-read.csv("bluegill_data/model_data.csv")%>% 
+bluegill_historical<-model_data%>% 
   filter(type == "historical") %>% 
   distinct(new_key, year) #just get the lake and the year, don't need all of the ages 
 
@@ -343,20 +367,11 @@ n_distinct(snt_blg_cpue$Survey_Number)
 #join snt data by the survey number and join with historical by year and lake
 model_data_final<-left_join(model_data, snt_blg_cpue, by=c('new_key', 'Survey_Number')) %>% 
   natural_join(cpue_hist, by=c('new_key', 'year'),  jointype = "LEFT") %>% 
+  mutate(cpue = ifelse(cpue == 0.0, NA, cpue )) %>%  #can't have a cpue of 0 for bluegill 
   select(new_key, lagoslakeid, nhdid, Survey_Number, county, LAT_DD, LONG_DD, date, day, month, year, AGE, everything()) #reorder columns 
 
 
 #write.csv(model_data_final, "bluegill_data/model_data.csv", row.names = FALSE)
 
-#### FINAL PREDICTOR VARIABLES 16 variables
-#perch, lmb, pike, walleye, secchi_m,  urban, ag, forest, wetlands, doy, logcounty, logarea, logdepth, DD_mean, cpue, surface_temp
 
-summary_data<-read.csv("bluegill_data/model_data.csv") %>% 
-  select('new_key', 'year', 'mean_secchi_m', 'perch', 'lmb', 'pike', 'walleye',  
-'urban', 'agriculture', 'forests', 'wetlands', 'logdepth', 
-'logarea', 'logcounty', 'doy', 'DD_mean', 'cpue', 'surf_temp_year') %>% 
-  distinct(new_key, year, .keep_all = TRUE)
-
-#summary stats 
-skimr::skim(summary_data)
   
