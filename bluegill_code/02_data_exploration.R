@@ -78,7 +78,7 @@ corrplot(brt.var.cor$r, type = "upper", order = "hclust",
  
 dev.off()
 
-#### summary statistics of predictor variables #### 
+#---summary statistics of predictor variables ----------------------
 
 #summary by lake year 
 summary_data_lakeyear<-read.csv("bluegill_data/model_data.csv") %>% 
@@ -100,7 +100,13 @@ summary_data_lake<-read.csv("bluegill_data/model_data.csv") %>%
 #summary stats 
 skimr::skim(summary_data_lake)
 
-#### look at day of year ####  
+#preditor stats 
+sum(summary_data_lakeyear$walleye, na.rm = TRUE)/2454 * 100
+sum(summary_data_lakeyear$lmb, na.rm = TRUE)/2454 * 100
+sum(summary_data_lakeyear$pike, na.rm = TRUE)/2454 * 100
+sum(summary_data_lakeyear$perch, na.rm = TRUE)/2454 * 100
+
+#--- look at day of year ------------------------------------------
 summary(binded$doy)
 binded%>% 
   group_by(type)%>% 
