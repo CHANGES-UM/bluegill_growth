@@ -1,6 +1,7 @@
 
 #Boosted Regression Tree Code 
 # Written by Elise Grabda and modified by Katelyn King and Peter Flood 
+### reduced model 
 
 #### load libraries ####
 library(dismo) #for BRT modeling
@@ -19,11 +20,10 @@ binded<-filter(binded, doy >= 141 & doy <=208)
 
 #### BRT models for individual ages #### 
 
-#set list of variables (15 predictors)
+#reduced model 
 ##year, Secchi, perch, lmb, pike, walleye,  urban, ag, forest, wetlands, logdepth, logarea, doy, DD_mean, cpue
-xx.list <- c('mean_secchi_m', 'perch', 'lmb', 'pike', 'walleye',  
-             'urban', 'agriculture', 'forests', 'wetlands', 'logdepth', 
-             'logarea', 'doy', 'DD_mean', 'cpue', 'surf_temp_year')
+xx.list <- c('mean_secchi_m', 'wetlands', 'logdepth', 
+             'logarea', 'DD_mean', 'cpue', 'surf_temp_year')
 
 ### AGE1 ####
 brt.a1 = gbm.step(data = subset(binded, AGE == 1), gbm.x = xx.list, gbm.y = 'length_mean_mm', family = "gaussian", 
@@ -56,9 +56,9 @@ ggInfluence(brt.a1, main = "Age 1")
 #ni1=nrow(subset(binded, AGE == 1))
 #predset1=sample(1:ni1,100) 
 #predbrt1=predict(brt.a1, 
- #                subset(binded, AGE == 1)[predset1,xx.list], 
-  #               n.trees=brt.a1$gbm.call$best.trees, 
-   #              type="response") 
+#                subset(binded, AGE == 1)[predset1,xx.list], 
+#               n.trees=brt.a1$gbm.call$best.trees, 
+#              type="response") 
 #plot(predbrt1, subset(binded, AGE == 1)[predset1,5]) #predicted lengths vs observed column 5
 
 #summary(lm(subset(binded, AGE == 1)[predset1,5] ~ predbrt1)) #predicted lengths vs observed column 5
@@ -74,7 +74,7 @@ ggPerformance(brt.a2)
 #relative influence plot with bars instead of points 
 ggInfluence(brt.a2, main = "Age 2")
 
- #interaction
+#interaction
 #brt.int2=gbm.interactions(brt.a2)
 #brt.simp2 = gbm.simplify(brt.a2)
 
@@ -238,25 +238,9 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = mean_secchi_m) %>% 
       mutate(Predictor_Name = "mean_secchi_m",
              y = scale(y)),
-    gbm::plot.gbm(brt.a1, i.var = "urban", return.grid = TRUE) %>% 
-      rename(Predictor_Value = urban) %>% 
-      mutate(Predictor_Name = "urban",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a1, i.var = "agriculture", return.grid = TRUE) %>% 
-      rename(Predictor_Value = agriculture) %>% 
-      mutate(Predictor_Name = "agriculture",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a1, i.var = "forests", return.grid = TRUE) %>% 
-      rename(Predictor_Value = forests) %>% 
-      mutate(Predictor_Name = "forests",
-             y = scale(y)),
     gbm::plot.gbm(brt.a1, i.var = "wetlands", return.grid = TRUE) %>% 
       rename(Predictor_Value = wetlands) %>% 
       mutate(Predictor_Name = "wetlands",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a1, i.var = "doy", return.grid = TRUE) %>% 
-      rename(Predictor_Value = doy) %>% 
-      mutate(Predictor_Name = "doy",
              y = scale(y)),
     gbm::plot.gbm(brt.a1, i.var = "logdepth", return.grid = TRUE) %>% 
       rename(Predictor_Value = logdepth) %>% 
@@ -269,22 +253,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a1,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a1,i.var = "walleye", return.grid = TRUE) %>% 
-      rename(Predictor_Value = walleye) %>% 
-      mutate(Predictor_Name = "walleye",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a1,i.var = "pike", return.grid = TRUE) %>% 
-      rename(Predictor_Value = pike) %>% 
-      mutate(Predictor_Name = "pike",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a1,i.var = "perch", return.grid = TRUE) %>% 
-      rename(Predictor_Value = perch) %>% 
-      mutate(Predictor_Name = "perch",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a1,i.var = "lmb", return.grid = TRUE) %>% 
-      rename(Predictor_Value = lmb) %>% 
-      mutate(Predictor_Name = "lmb",
              y = scale(y)),
     gbm::plot.gbm(brt.a1,i.var = "surf_temp_year", return.grid = TRUE) %>% 
       rename(Predictor_Value = surf_temp_year) %>% 
@@ -301,25 +269,9 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = mean_secchi_m) %>% 
       mutate(Predictor_Name = "mean_secchi_m",
              y = scale(y)),
-    gbm::plot.gbm(brt.a2, i.var = "urban", return.grid = TRUE) %>% 
-      rename(Predictor_Value = urban) %>% 
-      mutate(Predictor_Name = "urban",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a2, i.var = "agriculture", return.grid = TRUE) %>% 
-      rename(Predictor_Value = agriculture) %>% 
-      mutate(Predictor_Name = "agriculture",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a2, i.var = "forests", return.grid = TRUE) %>% 
-      rename(Predictor_Value = forests) %>% 
-      mutate(Predictor_Name = "forests",
-             y = scale(y)),
     gbm::plot.gbm(brt.a2, i.var = "wetlands", return.grid = TRUE) %>% 
       rename(Predictor_Value = wetlands) %>% 
       mutate(Predictor_Name = "wetlands",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a2, i.var = "doy", return.grid = TRUE) %>% 
-      rename(Predictor_Value = doy) %>% 
-      mutate(Predictor_Name = "doy",
              y = scale(y)),
     gbm::plot.gbm(brt.a2, i.var = "logdepth", return.grid = TRUE) %>% 
       rename(Predictor_Value = logdepth) %>% 
@@ -332,22 +284,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a2,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a2,i.var = "walleye", return.grid = TRUE) %>% 
-      rename(Predictor_Value = walleye) %>% 
-      mutate(Predictor_Name = "walleye",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a2,i.var = "pike", return.grid = TRUE) %>% 
-      rename(Predictor_Value = pike) %>% 
-      mutate(Predictor_Name = "pike",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a2,i.var = "perch", return.grid = TRUE) %>% 
-      rename(Predictor_Value = perch) %>% 
-      mutate(Predictor_Name = "perch",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a2,i.var = "lmb", return.grid = TRUE) %>% 
-      rename(Predictor_Value = lmb) %>% 
-      mutate(Predictor_Name = "lmb",
              y = scale(y)),
     gbm::plot.gbm(brt.a2,i.var = "surf_temp_year", return.grid = TRUE) %>% 
       rename(Predictor_Value = surf_temp_year) %>% 
@@ -364,25 +300,9 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = mean_secchi_m) %>% 
       mutate(Predictor_Name = "mean_secchi_m",
              y = scale(y)),
-    gbm::plot.gbm(brt.a3, i.var = "urban", return.grid = TRUE) %>% 
-      rename(Predictor_Value = urban) %>% 
-      mutate(Predictor_Name = "urban",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a3, i.var = "agriculture", return.grid = TRUE) %>% 
-      rename(Predictor_Value = agriculture) %>% 
-      mutate(Predictor_Name = "agriculture",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a3, i.var = "forests", return.grid = TRUE) %>% 
-      rename(Predictor_Value = forests) %>% 
-      mutate(Predictor_Name = "forests",
-             y = scale(y)),
     gbm::plot.gbm(brt.a3, i.var = "wetlands", return.grid = TRUE) %>% 
       rename(Predictor_Value = wetlands) %>% 
       mutate(Predictor_Name = "wetlands",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a3, i.var = "doy", return.grid = TRUE) %>% 
-      rename(Predictor_Value = doy) %>% 
-      mutate(Predictor_Name = "doy",
              y = scale(y)),
     gbm::plot.gbm(brt.a3, i.var = "logdepth", return.grid = TRUE) %>% 
       rename(Predictor_Value = logdepth) %>% 
@@ -395,22 +315,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a3,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a3,i.var = "walleye", return.grid = TRUE) %>% 
-      rename(Predictor_Value = walleye) %>% 
-      mutate(Predictor_Name = "walleye",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a3,i.var = "pike", return.grid = TRUE) %>% 
-      rename(Predictor_Value = pike) %>% 
-      mutate(Predictor_Name = "pike",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a3,i.var = "perch", return.grid = TRUE) %>% 
-      rename(Predictor_Value = perch) %>% 
-      mutate(Predictor_Name = "perch",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a3,i.var = "lmb", return.grid = TRUE) %>% 
-      rename(Predictor_Value = lmb) %>% 
-      mutate(Predictor_Name = "lmb",
              y = scale(y)),
     gbm::plot.gbm(brt.a3,i.var = "surf_temp_year", return.grid = TRUE) %>% 
       rename(Predictor_Value = surf_temp_year) %>% 
@@ -427,25 +331,9 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = mean_secchi_m) %>% 
       mutate(Predictor_Name = "mean_secchi_m",
              y = scale(y)),
-    gbm::plot.gbm(brt.a4, i.var = "urban", return.grid = TRUE) %>% 
-      rename(Predictor_Value = urban) %>% 
-      mutate(Predictor_Name = "urban",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a4, i.var = "agriculture", return.grid = TRUE) %>% 
-      rename(Predictor_Value = agriculture) %>% 
-      mutate(Predictor_Name = "agriculture",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a4, i.var = "forests", return.grid = TRUE) %>% 
-      rename(Predictor_Value = forests) %>% 
-      mutate(Predictor_Name = "forests",
-             y = scale(y)),
     gbm::plot.gbm(brt.a4, i.var = "wetlands", return.grid = TRUE) %>% 
       rename(Predictor_Value = wetlands) %>% 
       mutate(Predictor_Name = "wetlands",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a4, i.var = "doy", return.grid = TRUE) %>% 
-      rename(Predictor_Value = doy) %>% 
-      mutate(Predictor_Name = "doy",
              y = scale(y)),
     gbm::plot.gbm(brt.a4, i.var = "logdepth", return.grid = TRUE) %>% 
       rename(Predictor_Value = logdepth) %>% 
@@ -458,22 +346,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a4,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a4,i.var = "walleye", return.grid = TRUE) %>% 
-      rename(Predictor_Value = walleye) %>% 
-      mutate(Predictor_Name = "walleye",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a4,i.var = "pike", return.grid = TRUE) %>% 
-      rename(Predictor_Value = pike) %>% 
-      mutate(Predictor_Name = "pike",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a4,i.var = "perch", return.grid = TRUE) %>% 
-      rename(Predictor_Value = perch) %>% 
-      mutate(Predictor_Name = "perch",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a4,i.var = "lmb", return.grid = TRUE) %>% 
-      rename(Predictor_Value = lmb) %>% 
-      mutate(Predictor_Name = "lmb",
              y = scale(y)),
     gbm::plot.gbm(brt.a4,i.var = "surf_temp_year", return.grid = TRUE) %>% 
       rename(Predictor_Value = surf_temp_year) %>% 
@@ -490,25 +362,9 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = mean_secchi_m) %>% 
       mutate(Predictor_Name = "mean_secchi_m",
              y = scale(y)),
-    gbm::plot.gbm(brt.a5, i.var = "urban", return.grid = TRUE) %>% 
-      rename(Predictor_Value = urban) %>% 
-      mutate(Predictor_Name = "urban",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a5, i.var = "agriculture", return.grid = TRUE) %>% 
-      rename(Predictor_Value = agriculture) %>% 
-      mutate(Predictor_Name = "agriculture",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a5, i.var = "forests", return.grid = TRUE) %>% 
-      rename(Predictor_Value = forests) %>% 
-      mutate(Predictor_Name = "forests",
-             y = scale(y)),
     gbm::plot.gbm(brt.a5, i.var = "wetlands", return.grid = TRUE) %>% 
       rename(Predictor_Value = wetlands) %>% 
       mutate(Predictor_Name = "wetlands",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a5, i.var = "doy", return.grid = TRUE) %>% 
-      rename(Predictor_Value = doy) %>% 
-      mutate(Predictor_Name = "doy",
              y = scale(y)),
     gbm::plot.gbm(brt.a5, i.var = "logdepth", return.grid = TRUE) %>% 
       rename(Predictor_Value = logdepth) %>% 
@@ -521,22 +377,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a5,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a5,i.var = "walleye", return.grid = TRUE) %>% 
-      rename(Predictor_Value = walleye) %>% 
-      mutate(Predictor_Name = "walleye",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a5,i.var = "pike", return.grid = TRUE) %>% 
-      rename(Predictor_Value = pike) %>% 
-      mutate(Predictor_Name = "pike",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a5,i.var = "perch", return.grid = TRUE) %>% 
-      rename(Predictor_Value = perch) %>% 
-      mutate(Predictor_Name = "perch",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a5,i.var = "lmb", return.grid = TRUE) %>% 
-      rename(Predictor_Value = lmb) %>% 
-      mutate(Predictor_Name = "lmb",
              y = scale(y)),
     gbm::plot.gbm(brt.a5,i.var = "surf_temp_year", return.grid = TRUE) %>% 
       rename(Predictor_Value = surf_temp_year) %>% 
@@ -553,25 +393,9 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = mean_secchi_m) %>% 
       mutate(Predictor_Name = "mean_secchi_m",
              y = scale(y)),
-    gbm::plot.gbm(brt.a6, i.var = "urban", return.grid = TRUE) %>% 
-      rename(Predictor_Value = urban) %>% 
-      mutate(Predictor_Name = "urban",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a6, i.var = "agriculture", return.grid = TRUE) %>% 
-      rename(Predictor_Value = agriculture) %>% 
-      mutate(Predictor_Name = "agriculture",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a6, i.var = "forests", return.grid = TRUE) %>% 
-      rename(Predictor_Value = forests) %>% 
-      mutate(Predictor_Name = "forests",
-             y = scale(y)),
     gbm::plot.gbm(brt.a6, i.var = "wetlands", return.grid = TRUE) %>% 
       rename(Predictor_Value = wetlands) %>% 
       mutate(Predictor_Name = "wetlands",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a6, i.var = "doy", return.grid = TRUE) %>% 
-      rename(Predictor_Value = doy) %>% 
-      mutate(Predictor_Name = "doy",
              y = scale(y)),
     gbm::plot.gbm(brt.a6, i.var = "logdepth", return.grid = TRUE) %>% 
       rename(Predictor_Value = logdepth) %>% 
@@ -584,22 +408,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a6,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a6,i.var = "walleye", return.grid = TRUE) %>% 
-      rename(Predictor_Value = walleye) %>% 
-      mutate(Predictor_Name = "walleye",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a6,i.var = "pike", return.grid = TRUE) %>% 
-      rename(Predictor_Value = pike) %>% 
-      mutate(Predictor_Name = "pike",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a6,i.var = "perch", return.grid = TRUE) %>% 
-      rename(Predictor_Value = perch) %>% 
-      mutate(Predictor_Name = "perch",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a6,i.var = "lmb", return.grid = TRUE) %>% 
-      rename(Predictor_Value = lmb) %>% 
-      mutate(Predictor_Name = "lmb",
              y = scale(y)),
     gbm::plot.gbm(brt.a6,i.var = "surf_temp_year", return.grid = TRUE) %>% 
       rename(Predictor_Value = surf_temp_year) %>% 
@@ -616,25 +424,9 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = mean_secchi_m) %>% 
       mutate(Predictor_Name = "mean_secchi_m",
              y = scale(y)),
-    gbm::plot.gbm(brt.a7, i.var = "urban", return.grid = TRUE) %>% 
-      rename(Predictor_Value = urban) %>% 
-      mutate(Predictor_Name = "urban",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a7, i.var = "agriculture", return.grid = TRUE) %>% 
-      rename(Predictor_Value = agriculture) %>% 
-      mutate(Predictor_Name = "agriculture",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a7, i.var = "forests", return.grid = TRUE) %>% 
-      rename(Predictor_Value = forests) %>% 
-      mutate(Predictor_Name = "forests",
-             y = scale(y)),
     gbm::plot.gbm(brt.a7, i.var = "wetlands", return.grid = TRUE) %>% 
       rename(Predictor_Value = wetlands) %>% 
       mutate(Predictor_Name = "wetlands",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a7, i.var = "doy", return.grid = TRUE) %>% 
-      rename(Predictor_Value = doy) %>% 
-      mutate(Predictor_Name = "doy",
              y = scale(y)),
     gbm::plot.gbm(brt.a7, i.var = "logdepth", return.grid = TRUE) %>% 
       rename(Predictor_Value = logdepth) %>% 
@@ -647,22 +439,6 @@ lepmac.response.matrix <- bind_rows(
     gbm::plot.gbm(brt.a7,i.var = "cpue", return.grid = TRUE) %>% 
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a7,i.var = "walleye", return.grid = TRUE) %>% 
-      rename(Predictor_Value = walleye) %>% 
-      mutate(Predictor_Name = "walleye",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a7,i.var = "pike", return.grid = TRUE) %>% 
-      rename(Predictor_Value = pike) %>% 
-      mutate(Predictor_Name = "pike",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a7,i.var = "perch", return.grid = TRUE) %>% 
-      rename(Predictor_Value = perch) %>% 
-      mutate(Predictor_Name = "perch",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a7,i.var = "lmb", return.grid = TRUE) %>% 
-      rename(Predictor_Value = lmb) %>% 
-      mutate(Predictor_Name = "lmb",
              y = scale(y)),
     gbm::plot.gbm(brt.a7,i.var = "surf_temp_year", return.grid = TRUE) %>% 
       rename(Predictor_Value = surf_temp_year) %>% 
@@ -679,25 +455,9 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = mean_secchi_m) %>% 
       mutate(Predictor_Name = "mean_secchi_m",
              y = scale(y)),
-    gbm::plot.gbm(brt.a8, i.var = "urban", return.grid = TRUE) %>% 
-      rename(Predictor_Value = urban) %>% 
-      mutate(Predictor_Name = "urban",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a8, i.var = "agriculture", return.grid = TRUE) %>% 
-      rename(Predictor_Value = agriculture) %>% 
-      mutate(Predictor_Name = "agriculture",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a8, i.var = "forests", return.grid = TRUE) %>% 
-      rename(Predictor_Value = forests) %>% 
-      mutate(Predictor_Name = "forests",
-             y = scale(y)),
     gbm::plot.gbm(brt.a8, i.var = "wetlands", return.grid = TRUE) %>% 
       rename(Predictor_Value = wetlands) %>% 
       mutate(Predictor_Name = "wetlands",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a8, i.var = "doy", return.grid = TRUE) %>% 
-      rename(Predictor_Value = doy) %>% 
-      mutate(Predictor_Name = "doy",
              y = scale(y)),
     gbm::plot.gbm(brt.a8, i.var = "logdepth", return.grid = TRUE) %>% 
       rename(Predictor_Value = logdepth) %>% 
@@ -711,22 +471,6 @@ lepmac.response.matrix <- bind_rows(
       rename(Predictor_Value = cpue) %>% 
       mutate(Predictor_Name = "cpue",
              y = scale(y)),
-    gbm::plot.gbm(brt.a8,i.var = "walleye", return.grid = TRUE) %>% 
-      rename(Predictor_Value = walleye) %>% 
-      mutate(Predictor_Name = "walleye",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a8,i.var = "pike", return.grid = TRUE) %>% 
-      rename(Predictor_Value = pike) %>% 
-      mutate(Predictor_Name = "pike",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a8,i.var = "perch", return.grid = TRUE) %>% 
-      rename(Predictor_Value = perch) %>% 
-      mutate(Predictor_Name = "perch",
-             y = scale(y)),
-    gbm::plot.gbm(brt.a8,i.var = "lmb", return.grid = TRUE) %>% 
-      rename(Predictor_Value = lmb) %>% 
-      mutate(Predictor_Name = "lmb",
-             y = scale(y)),
     gbm::plot.gbm(brt.a8,i.var = "surf_temp_year", return.grid = TRUE) %>% 
       rename(Predictor_Value = surf_temp_year) %>% 
       mutate(Predictor_Name = "surf_temp_year",
@@ -734,21 +478,12 @@ lepmac.response.matrix <- bind_rows(
   ) %>% mutate(Age_Group = 8)
 ) %>% mutate(Age_Group = as.factor(Age_Group),
              Predictor_Name = case_when(
-               Predictor_Name == "agriculture" ~ "Agriculture",
                Predictor_Name == "DD_mean" ~ "Degree Days",
-               Predictor_Name == "doy" ~ "Day of Year",
-               Predictor_Name == "forests" ~ "Forests",
                Predictor_Name == "logarea" ~ "Lake Area",
                Predictor_Name == "logdepth" ~ "Lake Depth",
                Predictor_Name == "mean_secchi_m" ~ "Secchi Depth",
-               Predictor_Name == "month" ~ "Month",
-               Predictor_Name == "urban" ~ "Urban",
                Predictor_Name == "wetlands" ~ "Wetlands",
                Predictor_Name == "cpue" ~ "Bluegill CPUE",
-               Predictor_Name == "walleye" ~ "Walleye",
-               Predictor_Name == "pike" ~ "Northern Pike",
-               Predictor_Name == "perch" ~ "Yellow Perch",
-               Predictor_Name == "lmb" ~ "Largemouth Bass",
                Predictor_Name == "surf_temp_year" ~ "Surface Temperature",
                T ~ Predictor_Name
              ))
@@ -767,21 +502,12 @@ lepmac.rel.inf <- bind_rows(
 ) %>% 
   mutate(Age_Group = as.factor(Age_Group)) %>% 
   mutate(Predictor_Name = case_when(
-    var == "agriculture" ~ "Agriculture",
     var == "DD_mean" ~ "Degree Days",
-    var == "doy" ~ "Day of Year",
-    var == "forests" ~ "Forests",
     var == "logarea" ~ "Lake Area",
     var == "logdepth" ~ "Lake Depth",
     var == "mean_secchi_m" ~ "Secchi Depth",
-    var == "month" ~ "Month",
-    var == "urban" ~ "Urban",
     var == "wetlands" ~ "Wetlands",
     var == "cpue" ~ "Bluegill CPUE",
-    var == "walleye" ~ "Walleye",
-    var == "pike" ~ "Northern Pike",
-    var == "perch" ~ "Yellow Perch",
-    var == "lmb" ~ "Largemouth Bass",
     var == "surf_temp_year" ~ "Surface Temperature",
   )) %>% 
   select(-var) %>% 
@@ -805,12 +531,10 @@ mean.rel.inf
 response.matrix.rel.inf <- lepmac.response.matrix %>% 
   left_join(mean.rel.inf) %>% 
   mutate(Predictor_Name = fct_relevel(Predictor_Name, 
-                                      c( "Lake Depth", "Degree Days", "Lake Area", "Surface Temperature",
-                                         "Bluegill CPUE", "Day of Year",
-                                          "Wetlands",  "Agriculture","Forests",
-                                           "Secchi Depth","Urban",
-                                        "Walleye", "Largemouth Bass", "Northern Pike", "Yellow Perch"
-                                        )))
+                                      c(  "Degree Days", "Lake Depth","Lake Area", "Surface Temperature",
+                                          "Wetlands", "Bluegill CPUE",
+                                         "Secchi Depth"
+                                      )))
 
 
 
@@ -820,19 +544,19 @@ response.matrix.rel.inf <- lepmac.response.matrix %>%
 (partial.plot <- ggplot(response.matrix.rel.inf %>% 
                           rename(`Age Class` = Age_Group), 
                         aes(x = Predictor_Value, y = y, color = `Age Class`))+
-    geom_line()+
-    geom_rug(sides = "b", linewidth = 0.05)+
-    facet_wrap(~Predictor_Name, scales = "free")+
-    labs(y = "Fitted Function", x = "Predictor Values")+
-    scale_color_viridis_d()+
-    theme_bw()+
+   geom_line()+
+   geom_rug(sides = "b", linewidth = 0.05)+
+   facet_wrap(~Predictor_Name, scales = "free")+
+   labs(y = "Fitted Function", x = "Predictor Values")+
+   scale_color_viridis_d()+
+   theme_bw()+
    theme(
      axis.text.x = element_text(size = 6),
      strip.text = element_text(size = 7)
    )
 )
 
-ggsave(filename = "Figures/partial_dependency.tiff",
+#ggsave(filename = "Figures/partial_dependency.tiff",
        partial.plot,
        dpi = 300,
        width = 200,
@@ -843,15 +567,13 @@ ggsave(filename = "Figures/partial_dependency.tiff",
 ###-------Relative influence plot-------------------------------
 lepmac.rel.inf<-lepmac.rel.inf %>% 
   mutate(Predictor_Name = fct_relevel(Predictor_Name, 
-                                      c( "Lake Depth", "Degree Days", "Lake Area", "Surface Temperature",
-                                         "Bluegill CPUE", "Day of Year",
-                                         "Wetlands",  "Agriculture","Forests",
-                                         "Secchi Depth","Urban",
-                                         "Walleye", "Largemouth Bass", "Northern Pike", "Yellow Perch")))
+                                      c( "Degree Days", "Lake Depth","Lake Area", "Surface Temperature",
+                                         "Wetlands", "Bluegill CPUE",
+                                         "Secchi Depth")))
 
 (rel.inf.plot <- ggplot(lepmac.rel.inf ,
                         aes(x = fct_reorder(Predictor_Name, rel.inf), 
-                                             y = rel.inf, fill = `Variable Type`))+
+                            y = rel.inf, fill = `Variable Type`))+
     geom_bar(stat = "identity")+
     geom_hline(yintercept = (1/length(xx.list)*100))+
     facet_wrap(~Age_Group, scales = "free_x")+
@@ -910,6 +632,6 @@ brt.sum.stats <- bind_rows(
 ) %>% 
   pivot_wider(names_from = "Stat", values_from = "Model 1") 
 
-write.csv(brt.sum.stats, file = "Tables/brt_sum_stats.csv", row.names = F)
+#write.csv(brt.sum.stats, file = "Tables/brt_sum_stats.csv", row.names = F)
 
 

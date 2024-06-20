@@ -5,7 +5,15 @@ library(sf)
 library(dplyr)
 
 #read in data 
-bg_data <- read.csv("bluegill_data/model_data.csv")
+bg_data <- read.csv("bluegill_data/model_data.csv") %>% 
+  filter(doy >= 141 & doy <=208)
+
+bg_data_hist<-filter(bg_data, type == 'historical')%>%
+  distinct(new_key, .keep_all = TRUE)
+bg_data_cont<-filter(bg_data, type == 'contemporary')%>%
+  distinct(new_key, .keep_all = TRUE)
+n_distinct(bg_data_hist$new_key)
+n_distinct(bg_data_cont$new_key)
 
 #read in MI map
 # get US inset 
@@ -16,7 +24,7 @@ MI<-dplyr::filter(us_states, NAME == 'Michigan')
 plot(MI)
 
 # plot
-map_data<-ggplot() +
+(map_data<-ggplot() +
   geom_sf(data=MI, aes(), fill = "white") + 
   geom_point(data=bg_data, aes(x = LONG_DD, y = LAT_DD, color=c(type) )) +
   theme_bw() +  
@@ -29,6 +37,7 @@ map_data<-ggplot() +
   guides(colour  = guide_legend(position = "inside")) +
   theme(legend.justification.inside = c(0.1, 0.3)) + 
   theme(legend.text=element_text(size=15))
+)
 
 ggsave( map_data, 
         device = "png", 
