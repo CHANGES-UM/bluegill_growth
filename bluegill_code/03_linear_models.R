@@ -59,8 +59,10 @@ summary(lm.doy.yr)
 )
 
 #How do our climate variables vary through time?
+climate_plot_data<-binded%>% 
+  distinct(year, new_key, .keep_all = TRUE)
 
-(temp.yr.plot <- ggplot(data = binded, aes(x = year, y = surf_temp_year))+
+(temp.yr.plot <- ggplot(data = climate_plot_data, aes(x = year, y = surf_temp_year))+
     geom_point()+
     geom_smooth()+
     labs(y = "Surface Temperature", x = "Year")+
@@ -74,15 +76,22 @@ summary(lm.doy.yr)
     theme_bw()
 )
 
-(dd.yr.plot <- ggplot(data = binded, aes(x = year, y = dd_year))+
+(dd.yr.plot <- ggplot(data = climate_plot_data, aes(x = year, y = dd_year))+
     geom_point()+
     geom_smooth()+
     labs(y = "Degree Days", x = "Year")+
     theme_bw()
 )
 
-climate.plot <- ggarrange(temp.yr.plot, dd.yr.plot, dd.mean.yr.plot, 
-                          ncol = 1, nrow = 3, labels = "AUTO")
+(lat.yr.plot <- ggplot(data = climate_plot_data, aes(x = year, y = LAT_DD))+
+    geom_point()+
+    geom_smooth()+
+    labs(y = "Latitude", x = "Year")+
+    theme_bw()
+)
+
+climate.plot <- ggarrange(temp.yr.plot, dd.yr.plot, dd.mean.yr.plot, lat.yr.plot,
+                          ncol = 1, nrow = 4, labels = "AUTO")
 climate.plot
 
 ggsave(filename = "Figures/climate_vars_year.tiff", climate.plot,
