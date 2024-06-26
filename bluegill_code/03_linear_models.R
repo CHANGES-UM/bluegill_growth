@@ -10,7 +10,9 @@ library(ggpmisc)
 library(ggpubr) #arranging multipanel plots
 #-----------------------Load Data---------------------------------------------------
 binded <- read.csv("bluegill_data/model_data.csv") %>% 
-  mutate(cpue = log(cpue+1)) %>% 
+  mutate(cpue = log10(cpue+1), 
+         logarea = log10(area_ha),
+         logdepth = log10(depth_m)) %>% 
   mutate(AGE = as.factor(AGE))
 
 
