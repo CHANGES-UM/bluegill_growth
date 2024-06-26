@@ -12,10 +12,11 @@ library(tidyverse) #data manipulation
 
 ### read in data that was created from 01_data cleaning scripts # 
 binded<-read.csv("bluegill_data/model_data.csv") %>% 
-  mutate(cpue = log(cpue+1))
+  mutate(cpue = log10(cpue+1), 
+         logarea = log10(area_ha),
+           logdepth = log10(depth_m)
+  )
 
-#restrict doy to day 141-208 ( May 20 - Jul 26) is the range across the whole dataset
-binded<-filter(binded, doy >= 141 & doy <=208)
 
 #### BRT models for individual ages #### 
 
@@ -805,11 +806,11 @@ mean.rel.inf
 response.matrix.rel.inf <- lepmac.response.matrix %>% 
   left_join(mean.rel.inf) %>% 
   mutate(Predictor_Name = fct_relevel(Predictor_Name, 
-                                      c( "Lake Depth", "Degree Days", "Lake Area", "Surface Temperature",
-                                         "Bluegill CPUE", "Day of Year",
-                                          "Wetlands",  "Agriculture","Forests",
-                                           "Secchi Depth","Urban",
-                                        "Walleye", "Largemouth Bass", "Northern Pike", "Yellow Perch"
+                                      c( "Day of Year","Lake Depth", "Degree Days", "Surface Temperature",
+                                         "Lake Area", 
+                                          "Wetlands",  "Agriculture","Forests","Bluegill CPUE", "Urban",
+                                           "Secchi Depth",
+                                        "Walleye",  "Northern Pike", "Yellow Perch", "Largemouth Bass"
                                         )))
 
 
@@ -843,11 +844,11 @@ ggsave(filename = "Figures/partial_dependency.tiff",
 ###-------Relative influence plot-------------------------------
 lepmac.rel.inf<-lepmac.rel.inf %>% 
   mutate(Predictor_Name = fct_relevel(Predictor_Name, 
-                                      c( "Lake Depth", "Degree Days", "Lake Area", "Surface Temperature",
-                                         "Bluegill CPUE", "Day of Year",
-                                         "Wetlands",  "Agriculture","Forests",
-                                         "Secchi Depth","Urban",
-                                         "Walleye", "Largemouth Bass", "Northern Pike", "Yellow Perch")))
+                                      c( "Day of Year","Lake Depth", "Degree Days", "Surface Temperature",
+                                         "Lake Area", 
+                                         "Wetlands",  "Agriculture","Forests","Bluegill CPUE", "Urban",
+                                         "Secchi Depth",
+                                         "Walleye",  "Northern Pike", "Yellow Perch", "Largemouth Bass")))
 
 (rel.inf.plot <- ggplot(lepmac.rel.inf ,
                         aes(x = fct_reorder(Predictor_Name, rel.inf), 

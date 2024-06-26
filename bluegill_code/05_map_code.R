@@ -6,7 +6,7 @@ library(dplyr)
 
 #read in data 
 bg_data <- read.csv("bluegill_data/model_data.csv") %>% 
-  filter(doy >= 141 & doy <=208)
+  filter(doy >= 139 & doy <=162)
 
 bg_data_hist<-filter(bg_data, type == 'historical')%>%
   distinct(new_key, .keep_all = TRUE)
