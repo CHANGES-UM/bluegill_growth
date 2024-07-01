@@ -66,12 +66,20 @@ summary(lm.doy.yr)
     theme_bw()
 )
 
-climate.plot <- ggarrange(temp.yr.plot, dd.yr.plot, dd.mean.yr.plot, 
-                          ncol = 1, nrow = 3, labels = "AUTO")
+(lat.yr.plot <- ggplot(data = binded, aes(x = year, y = LAT_DD))+
+    geom_point()+
+    geom_smooth()+
+    labs(y = "Latitude", x = "Year")+
+    theme_bw()
+)
+
+climate.plot <- ggarrange(temp.yr.plot, dd.yr.plot, 
+                          dd.mean.yr.plot, lat.yr.plot,
+                          ncol = 1, nrow = 4, labels = "AUTO")
 climate.plot
 
 ggsave(filename = "Figures/climate_vars_year.tiff", climate.plot,
-       height = 200, width = 150, units = "mm", dpi = 300)
+       height = 250, width = 150, units = "mm", dpi = 300)
 
 #-----------Multiple regression of length through time-------------------------------
 ###-------Full Dataset-----------------------------------------------------------------
