@@ -3,19 +3,18 @@ library(RVAideMemoire) #used for testing lm model assumptions
 library(DHARMa) #checking model assumptions and output
 library(fitdistrplus) #insight into which distribution to use
 library(logspline) #k-s test for selected distribution 
+library(car) #partial regression plots
 library(effectsize) #calculate effect sizes
 library(ggeffects) #marginal effect plots
+library(marginaleffects) #marginal effects
 library(emmeans) #posthoc analyses
 library(ggpmisc) 
 library(ggpubr) #arranging multipanel plots
 #-----------------------Load Data---------------------------------------------------
 binded <- read.csv("bluegill_data/model_data.csv") %>% 
-  mutate(cpue = log10(cpue+1), 
-         logarea = log10(area_ha),
-         logdepth = log10(depth_m)) %>% 
-  mutate(AGE = as.factor(AGE))
-
-
+  mutate(cpue = log(cpue+1)) %>% 
+  mutate(AGE = as.factor(AGE),
+         log_length = log10(length_mean_mm))
 #-----------------------Linear Regressions-------------------------------------------
 #We want to check if when sampling occurred meaningfully varies through time
 #so regressing doy and year
@@ -23,20 +22,6 @@ binded <- read.csv("bluegill_data/model_data.csv") %>%
 #check model assumptions
 #normality
 
-#histograms
-(doy.age.hist <- ggplot(data = binded %>% 
-                          mutate(Year = as.factor(year)), 
-                        aes(x = doy, fill = Year))+
-   geom_histogram()+
-   facet_wrap(~AGE)+
-   scale_fill_viridis_d()+
-   labs(y = "Count", x = "Day of Year")+
-   scale_y_continuous(expand = c(0,0))+
-   theme_bw()
-)
-
-ggsave(filename = "Figures/doy_freq_hist.tiff", plot = doy.age.hist, 
-       width = 200, height = 150, units = "mm", dpi = 300)
 
 #shapiro test by factor level
 byf.shapiro(doy ~ AGE, data = binded)
@@ -59,10 +44,8 @@ summary(lm.doy.yr)
 )
 
 #How do our climate variables vary through time?
-climate_plot_data<-binded%>% 
-  distinct(year, new_key, .keep_all = TRUE)
 
-(temp.yr.plot <- ggplot(data = climate_plot_data, aes(x = year, y = surf_temp_year))+
+(temp.yr.plot <- ggplot(data = binded, aes(x = year, y = surf_temp_year))+
     geom_point()+
     geom_smooth()+
     labs(y = "Surface Temperature", x = "Year")+
@@ -76,28 +59,22 @@ climate_plot_data<-binded%>%
     theme_bw()
 )
 
-(dd.yr.plot <- ggplot(data = climate_plot_data, aes(x = year, y = dd_year))+
+(dd.yr.plot <- ggplot(data = binded, aes(x = year, y = dd_year))+
     geom_point()+
     geom_smooth()+
     labs(y = "Degree Days", x = "Year")+
     theme_bw()
 )
 
-(lat.yr.plot <- ggplot(data = climate_plot_data, aes(x = year, y = LAT_DD))+
-    geom_point()+
-    geom_smooth()+
-    labs(y = "Latitude", x = "Year")+
-    theme_bw()
-)
-
-climate.plot <- ggarrange(temp.yr.plot, dd.yr.plot, dd.mean.yr.plot, lat.yr.plot,
-                          ncol = 1, nrow = 4, labels = "AUTO")
+climate.plot <- ggarrange(temp.yr.plot, dd.yr.plot, dd.mean.yr.plot, 
+                          ncol = 1, nrow = 3, labels = "AUTO")
 climate.plot
 
 ggsave(filename = "Figures/climate_vars_year.tiff", climate.plot,
        height = 200, width = 150, units = "mm", dpi = 300)
 
 #-----------Multiple regression of length through time-------------------------------
+###-------Full Dataset-----------------------------------------------------------------
 #partial to several important variables
 
 (year.age.hist <- ggplot(data = binded, aes(x = year))+
@@ -115,7 +92,7 @@ byf.shapiro(length_mean_mm ~ as.factor(AGE), data = binded)
 #not normal, log transformation doesn't fix this
 
 #running lm anyway just to see what it looks like 
-lm.length.year <- lm(log(length_mean_mm) ~ year*AGE + logarea + logdepth + doy, data = binded)
+lm.length.year <- lm(length_mean_mm ~ year*AGE + logarea + logdepth + doy, data = binded)
 summary(lm.length.year)
 eta_squared(lm.length.year)
 interpret(eta_squared(lm.length.year), rules = "cohen1992")
@@ -157,31 +134,40 @@ pairs(emm, simple = "AGE") %>%
     theme_bw()
 )
 
+######---------------------Marginal Effects------------------------------------------
 #plot marginal effects predicted over range of x and y values in the data
+result <- predict_response(lm.length.year, c("year", "AGE"))
+plot(result)
+test_predictions(result) %>% 
+  write.csv(file = "Tables/pairwise_length_time_slopes.csv", row.names = F)
+
 (length.year.marginal.plot <- ggpredict(lm.length.year, terms = c("year", "AGE")) %>%  
     plot()+
     #stat_poly_eq(use_label("eq"))+
-    annotate(geom = "text", label = "y = 0.24x - 273", x = 2000, y = 215)+
-    annotate(geom = "text", label = "y = 0.27x - 344", x = 2000, y = 205)+
-    annotate(geom = "text", label = "y = 0.31x - 440", x = 2000, y = 192)+
-    annotate(geom = "text", label = "y = 0.16x - 143", x = 2000, y = 175)+
-    annotate(geom = "text", label = "y = -0.06x + 260", x = 2000, y = 152)+
-    annotate(geom = "text", label = "y = -0.24x + 593", x = 2000, y = 130)+
-    annotate(geom = "text", label = "y = -0.41x + 921", x = 2000, y = 100)+
-    annotate(geom = "text", label = "y = -0.70x + 1460", x = 2000, y = 70)+
+    #stat_regline_equation()+
+    stat_poly_line()+
+    annotate(geom = "text", label = "y = -95 + 0.15x", x = 2000, y = 217)+
+    annotate(geom = "text", label = "y = -200 + 0.2x", x = 2000, y = 207)+
+    annotate(geom = "text", label = "y = -330 + 0.26x", x = 2000, y = 194)+
+    annotate(geom = "text", label = "y = -51 + 0.11x", x = 2000, y = 177)+
+    annotate(geom = "text", label = "y = 320-0.09x", x = 2000, y = 155)+
+    annotate(geom = "text", label = "y = 610 - 0.24x", x = 2000, y = 132)+
+    annotate(geom = "text", label = "y = 870 - 0.39x", x = 2000, y = 105)+
+    annotate(geom = "text", label = "y = 1300 - 0.62x", x = 2000, y = 75)+
     scale_color_viridis_d()+
     scale_fill_viridis_d()+
     labs(title = NULL,
          y = "Mean Length-at-Age (mm)",
          x = "Year")+
-    guides(fill = guide_legend(title = "Age"), color = guide_legend(title = "Age"))+
+    guides(fill = guide_legend(title = "Age", reverse = T), color = guide_legend(title = "Age", reverse = T))+
     theme_bw()
 )
 
-ggsave(filename = "~/GitHub/bluegill_growth/Figures/length_year_marginal_effects_plot.jpg", length.year.marginal.plot, 
-       dpi = 300, width = 200, height = 150, units = "mm")
 
-#----------Test alternate distributions---------------------------------------------------------------------------
+ggsave(filename = "~/GitHub/bluegill_growth/Figures/length_year_marginal_effects_plot.jpg", 
+       length.year.marginal.plot, 
+       dpi = 300, width = 200, height = 150, units = "mm")
+####----------Test alternate distributions---------------------------------------------------------------------------
 #try to find a distribution to use other than normal
 #generate Cullen and Frey plot to get ideas for distributions to test
 descdist(binded$length_mean_mm)
@@ -238,3 +224,157 @@ fit.gamma$aic
 #                , fit
 # )
 
+###-------Partial Dataset-----------------------------------------------------------------
+#restricted day of year (doy) range
+#partial to several important variables
+binded.doy.restricted <- binded %>% filter(doy >= 141 & doy <=208)
+
+(year.age.hist.restricted <- ggplot(data = binded.doy.restricted, aes(x = year))+
+   geom_histogram()+
+   facet_wrap(~AGE)
+)
+
+(length.age.hist.restricted <- ggplot(data = binded.doy.restricted, aes(x = length_mean_mm))+
+    geom_histogram()+
+    facet_wrap(~AGE)
+)
+
+#check normality
+byf.shapiro(length_mean_mm ~ as.factor(AGE), data = binded.doy.restricted)
+#not normal for all age classes, log transformation makes it worse
+
+#running lm anyway just to see what it looks like 
+lm.length.year.restricted <- lm(length_mean_mm ~ year*AGE + logarea + logdepth + doy, 
+                     data = binded.doy.restricted)
+summary(lm.length.year.restricted)
+eta_squared(lm.length.year.restricted)
+interpret(eta_squared(lm.length.year.restricted), rules = "cohen1992")
+AIC(lm.length.year.restricted)
+
+
+testDispersion(lm.length.year.restricted)
+
+simulation.output.restricted <- simulateResiduals(fittedModel = lm.length.year.restricted)
+
+residuals(simulation.output.restricted)
+residuals(simulation.output.restricted, quantileFunction = qnorm)
+
+plot(simulation.output.restricted)
+
+#post hoc comparisons
+emm.restricted <- emmeans(lm.length.year.restricted, ~ AGE*year)
+pairs(emm.restricted, simple = "AGE")
+test(pairs(emm.restricted, by = "year"), by = NULL, adjust = "mvt")
+
+#export tables
+interpret(eta_squared(lm.length.year.restricted), rules = "cohen1992") %>% 
+  write.csv(file = "Tables/eta_squared_doy_restricted.csv")
+
+pairs(emm.restricted, simple = "AGE") %>% 
+  write.csv(file = "Tables/emmeans_doy_restricted.csv")
+
+#plot raw data
+(length.year.plot.restricted <- ggplot(data = binded.doy.restricted %>% 
+                              mutate(Age = as.factor(AGE)), 
+                            aes(x = year, y = length_mean_mm, 
+                                color = Age, fill = Age, group = Age))+
+    #geom_point()+
+    geom_smooth(method = "lm")+
+    stat_poly_eq(use_label("eq"))+
+    scale_color_viridis_d()+
+    scale_fill_viridis_d()+
+    labs(y = "Length (mm)", x = "Year")+
+    theme_bw()
+)
+
+####---Marginal Effects------------------------------------------------------
+#plot marginal effects predicted over range of x and y values in the data
+result.restricted <- predict_response(lm.length.year.restricted, c("year", "AGE"))
+plot(result.restricted)
+test_predictions(result.restricted) %>% 
+  write.csv(file = "Tables/pairwise_length_time_slopes_restricted.csv", row.names = F)
+
+
+(length.year.marginal.plot.restricted <- ggpredict(lm.length.year.restricted, terms = c("year", "AGE")) %>%  
+    plot()+
+    #stat_poly_eq(use_label("eq"))+
+    #stat_regline_equation()+
+    stat_poly_line()+
+    annotate(geom = "text", label = "y = 220 - 0.005x", x = 2000, y = 217)+
+    annotate(geom = "text", label = "y = -32 + 0.12x", x = 2000, y = 207)+
+    annotate(geom = "text", label = "y = -130 + 0.16x", x = 2000, y = 194)+
+    annotate(geom = "text", label = "y = 120 + 0.027x", x = 2000, y = 177)+
+    annotate(geom = "text", label = "y = 460 - 0.16x", x = 2000, y = 154)+
+    annotate(geom = "text", label = "y = 690 - 0.28x", x = 2000, y = 130)+
+    annotate(geom = "text", label = "y = 890 - 0.4x", x = 2000, y = 100)+
+    annotate(geom = "text", label = "y = 1000 - 0.49x", x = 2000, y = 70)+
+    scale_color_viridis_d()+
+    scale_fill_viridis_d()+
+    labs(title = NULL,
+         y = "Mean Length-at-Age (mm)",
+         x = "Year")+
+    guides(fill = guide_legend(title = "Age", reverse = T), 
+           color = guide_legend(title = "Age", reverse = T))+
+    theme_bw()
+)
+
+ggsave(filename = "~/GitHub/bluegill_growth/Figures/length_year_marginal_effects_plot_restricted.jpg", 
+       length.year.marginal.plot.restricted, 
+       dpi = 300, width = 200, height = 150, units = "mm")
+
+####----------Test alternate distributions---------------------------------------------------------------------------
+#try to find a distribution to use other than normal
+#generate Cullen and Frey plot to get ideas for distributions to test
+descdist(binded.doy.restricted$length_mean_mm)
+
+#fit several potential distributions
+fit.weibull.restricted <- fitdist(binded.doy.restricted$length_mean_mm, "weibull")
+fit.norm.restricted <- fitdist(binded.doy.restricted$length_mean_mm, "norm")
+fit.log.norm.restricted <- fitdist(log(binded.doy.restricted$length_mean_mm), "norm")
+fit.gamma.restricted <- fitdist(binded.doy.restricted$length_mean_mm, "gamma")
+
+#plot the fit of those distributions
+plot(fit.weibull.restricted)
+plot(fit.norm.restricted)
+plot(fit.log.norm.restricted)
+plot(fit.gamma.restricted)
+
+#compare aic values
+fit.weibull.restricted$aic
+fit.norm.restricted$aic
+fit.log.norm.restricted$aic
+fit.gamma.restricted$aic
+
+#log normal has the lowest aic by an order of magnitude
+#so we're going to stick with a multiple regression using log transformed lengths
+
+#Kolmogorov-Smirnov test simulation
+#weibull has lowest AIC and best looking plots
+# n.sims <- 5e4
+# 
+# stats <- replicate(n.sims, {      
+#   r <- rweibull(n = length(binded.doy.restricted$length_mean_mm)
+#                 , shape= fit.weibull$estimate["shape"]
+#                 , scale = fit.weibull$estimate["scale"]
+#   )
+#   estfit.weibull <- fitdist(r, "weibull") # added to account for the estimated parameters
+#   as.numeric(ks.test(r
+#                      , "pweibull"
+#                      , shape= estfit.weibull$estimate["shape"]
+#                      , scale = estfit.weibull$estimate["scale"])$statistic
+#   )      
+# })
+# 
+# #plot
+# plot(ecdf(stats), las = 1, main = "KS-test statistic simulation (CDF)", col = "darkorange", lwd = 1.7)
+# grid()
+# 
+# #generate a p-value
+# fit <- logspline(stats)
+# 
+# 1 - plogspline(ks.test(x
+#                        , "pweibull"
+#                        , shape= fit.weibull$estimate["shape"]
+#                        , scale = fit.weibull$estimate["scale"])$statistic
+#                , fit
+# )

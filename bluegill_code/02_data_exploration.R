@@ -125,5 +125,241 @@ ggplot(binded, aes(doy)) +
   geom_density(aes(fill = type), alpha=0.4)
 
 
+#----Frequency histograms for covariates--------------------------
+###DOY
+#full data set
+(doy.age.hist.full <- ggplot(data = binded %>% 
+                          mutate(Year = as.factor(year)), 
+                        aes(x = doy, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Day of Year")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/doy_freq_hist_full.tiff", 
+       plot = doy.age.hist.full, 
+       width = 200, height = 150, units = "mm", dpi = 300)
  
- 
+#restricted doy values 
+(doy.age.hist.restricted <- ggplot(data = binded %>% 
+                          filter(doy >= 141 & doy <=208) %>% 
+                          mutate(Year = as.factor(year)), 
+                        aes(x = doy, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Day of Year")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/doy_freq_hist_restricted.tiff", 
+       plot = doy.age.hist.restricted, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+###Degree days
+#full data set
+(dd.age.hist.full <- ggplot(data = binded %>% 
+                          mutate(Year = as.factor(year)), 
+                        aes(x = DD_mean, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Cohort Degree Days")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/dd_freq_hist_full.tiff", 
+       plot = dd.age.hist.full, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+#restricted doy values 
+(dd.age.hist.restricted <- ggplot(data = binded %>% 
+                          filter(doy >= 141 & doy <=208) %>% 
+                          mutate(Year = as.factor(year)), 
+                        aes(x = DD_mean, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Cohort Degree Days")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/dd_freq_hist_restricted.tiff", 
+       plot = dd.age.hist.restricted, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+###Lake Depth
+#full data set
+(lakedepth.age.hist.full <- ggplot(data = binded %>% 
+                              mutate(Year = as.factor(year)), 
+                            aes(x = logdepth, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Log10 Lake Area")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/lakedepth_freq_hist_full.tiff", 
+       plot = lakedepth.age.hist.full, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+#restricted doy values 
+(lakedepth.age.hist.restricted <- ggplot(data = binded %>% 
+                                    filter(doy >= 141 & doy <=208) %>% 
+                                    mutate(Year = as.factor(year)), 
+                                  aes(x = logdepth, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Log10 Lake Area")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/lakedepth_freq_hist_restricted.tiff", 
+       plot = lakedepth.age.hist.restricted, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+###Surface Temperature
+#full data set
+(surftemp.age.hist.full <- ggplot(data = binded %>% 
+                              mutate(Year = as.factor(year)), 
+                            aes(x = surf_temp_year, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Mean Annual Surface Temperature")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/surftemp_freq_hist_full.tiff", 
+       plot = surftemp.age.hist.full, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+#restricted doy values 
+(surftemp.age.hist.restricted <- ggplot(data = binded %>% 
+                                    filter(doy >= 141 & doy <=208) %>% 
+                                    mutate(Year = as.factor(year)), 
+                                  aes(x = surf_temp_year, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Mean Annual Surface Temperature")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/surftemp_freq_hist_restricted.tiff", 
+       plot = surftemp.age.hist.restricted, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+###Lake Area
+#full data set
+(lakearea.age.hist.full <- ggplot(data = binded %>% 
+                                     mutate(Year = as.factor(year)), 
+                                   aes(x = logarea, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Log10 Lake Area")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/lakearea_freq_hist_full.tiff", 
+       plot = lakearea.age.hist.full, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+#restricted doy values 
+(lakearea.age.hist.restricted <- ggplot(data = binded %>% 
+                                           filter(doy >= 141 & doy <=208) %>% 
+                                           mutate(Year = as.factor(year)), 
+                                         aes(x = logarea, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Log10 Lake Area")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/lakearea_freq_hist_restricted.tiff", 
+       plot = lakearea.age.hist.restricted, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+###Bluegill CPUE
+#full data set
+(bgcpue.age.hist.full <- ggplot(data = binded %>% 
+                                     mutate(Year = as.factor(year)), 
+                                   aes(x = cpue, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Bluegill CPUE")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/bgcpue_freq_hist_full.tiff", 
+       plot = bgcpue.age.hist.full, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+#restricted doy values 
+(bgcpue.age.hist.restricted <- ggplot(data = binded %>% 
+                                           filter(doy >= 141 & doy <=208) %>% 
+                                           mutate(Year = as.factor(year)), 
+                                         aes(x = cpue, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Bluegill CPUE")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/bgcpue_freq_hist_restricted.tiff", 
+       plot = bgcpue.age.hist.restricted, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+###Secchi Depth
+#full data set
+(secchi.age.hist.full <- ggplot(data = binded %>% 
+                                  mutate(Year = as.factor(year)), 
+                                aes(x = mean_secchi_m, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Secchi Depth")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/secchi_freq_hist_full.tiff", 
+       plot = secchi.age.hist.full, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+#restricted doy values 
+(secchi.age.hist.restricted <- ggplot(data = binded %>% 
+                                        filter(doy >= 141 & doy <=208) %>% 
+                                        mutate(Year = as.factor(year)), 
+                                      aes(x = mean_secchi_m, fill = Year))+
+    geom_histogram()+
+    facet_wrap(~AGE)+
+    scale_fill_viridis_d()+
+    labs(y = "Count", x = "Secchi Depth")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()
+)
+
+ggsave(filename = "Figures/Frequency Histograms/secchi_freq_hist_restricted.tiff", 
+       plot = secchi.age.hist.restricted, 
+       width = 200, height = 150, units = "mm", dpi = 300)
