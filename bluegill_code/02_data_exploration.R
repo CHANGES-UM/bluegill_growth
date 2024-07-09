@@ -9,7 +9,11 @@ library(corrplot) #plot correlations
 #---Load Data-------------------------------------------------------------------
 binded <- read.csv("bluegill_data/model_data.csv") %>% 
   mutate(cpue = log(cpue+1)) %>% 
-  mutate(AGE = as.factor(AGE))
+  mutate(AGE = as.factor(AGE)) %>% 
+  mutate(Type = case_when(
+    year <= 1998 ~ "Historic",
+    year > 1998 ~ "Contemporary"
+  ))
 
 #----Check Correlations---------------------------------------------------------
 names(binded)
@@ -130,10 +134,10 @@ ggplot(binded, aes(doy)) +
 #full data set
 (doy.age.hist.full <- ggplot(data = binded %>% 
                           mutate(Year = as.factor(year)), 
-                        aes(x = doy, fill = Year))+
+                        aes(x = doy, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Day of Year")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -147,10 +151,10 @@ ggsave(filename = "Figures/Frequency Histograms/doy_freq_hist_full.tiff",
 (doy.age.hist.restricted <- ggplot(data = binded %>% 
                           filter(doy >= 141 & doy <=208) %>% 
                           mutate(Year = as.factor(year)), 
-                        aes(x = doy, fill = Year))+
+                        aes(x = doy, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Day of Year")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -164,10 +168,10 @@ ggsave(filename = "Figures/Frequency Histograms/doy_freq_hist_restricted.tiff",
 #full data set
 (dd.age.hist.full <- ggplot(data = binded %>% 
                           mutate(Year = as.factor(year)), 
-                        aes(x = DD_mean, fill = Year))+
+                        aes(x = DD_mean, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Cohort Degree Days")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -181,10 +185,10 @@ ggsave(filename = "Figures/Frequency Histograms/dd_freq_hist_full.tiff",
 (dd.age.hist.restricted <- ggplot(data = binded %>% 
                           filter(doy >= 141 & doy <=208) %>% 
                           mutate(Year = as.factor(year)), 
-                        aes(x = DD_mean, fill = Year))+
+                        aes(x = DD_mean, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Cohort Degree Days")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -198,10 +202,10 @@ ggsave(filename = "Figures/Frequency Histograms/dd_freq_hist_restricted.tiff",
 #full data set
 (lakedepth.age.hist.full <- ggplot(data = binded %>% 
                               mutate(Year = as.factor(year)), 
-                            aes(x = logdepth, fill = Year))+
+                            aes(x = logdepth, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Log10 Lake Area")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -215,10 +219,10 @@ ggsave(filename = "Figures/Frequency Histograms/lakedepth_freq_hist_full.tiff",
 (lakedepth.age.hist.restricted <- ggplot(data = binded %>% 
                                     filter(doy >= 141 & doy <=208) %>% 
                                     mutate(Year = as.factor(year)), 
-                                  aes(x = logdepth, fill = Year))+
+                                  aes(x = logdepth, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Log10 Lake Area")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -232,10 +236,10 @@ ggsave(filename = "Figures/Frequency Histograms/lakedepth_freq_hist_restricted.t
 #full data set
 (surftemp.age.hist.full <- ggplot(data = binded %>% 
                               mutate(Year = as.factor(year)), 
-                            aes(x = surf_temp_year, fill = Year))+
+                            aes(x = surf_temp_year, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Mean Annual Surface Temperature")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -249,10 +253,10 @@ ggsave(filename = "Figures/Frequency Histograms/surftemp_freq_hist_full.tiff",
 (surftemp.age.hist.restricted <- ggplot(data = binded %>% 
                                     filter(doy >= 141 & doy <=208) %>% 
                                     mutate(Year = as.factor(year)), 
-                                  aes(x = surf_temp_year, fill = Year))+
+                                  aes(x = surf_temp_year, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Mean Annual Surface Temperature")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -266,10 +270,10 @@ ggsave(filename = "Figures/Frequency Histograms/surftemp_freq_hist_restricted.ti
 #full data set
 (lakearea.age.hist.full <- ggplot(data = binded %>% 
                                      mutate(Year = as.factor(year)), 
-                                   aes(x = logarea, fill = Year))+
+                                   aes(x = logarea, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Log10 Lake Area")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -283,10 +287,10 @@ ggsave(filename = "Figures/Frequency Histograms/lakearea_freq_hist_full.tiff",
 (lakearea.age.hist.restricted <- ggplot(data = binded %>% 
                                            filter(doy >= 141 & doy <=208) %>% 
                                            mutate(Year = as.factor(year)), 
-                                         aes(x = logarea, fill = Year))+
+                                         aes(x = logarea, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Log10 Lake Area")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -300,10 +304,10 @@ ggsave(filename = "Figures/Frequency Histograms/lakearea_freq_hist_restricted.ti
 #full data set
 (bgcpue.age.hist.full <- ggplot(data = binded %>% 
                                      mutate(Year = as.factor(year)), 
-                                   aes(x = cpue, fill = Year))+
+                                   aes(x = cpue, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Bluegill CPUE")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -317,10 +321,10 @@ ggsave(filename = "Figures/Frequency Histograms/bgcpue_freq_hist_full.tiff",
 (bgcpue.age.hist.restricted <- ggplot(data = binded %>% 
                                            filter(doy >= 141 & doy <=208) %>% 
                                            mutate(Year = as.factor(year)), 
-                                         aes(x = cpue, fill = Year))+
+                                         aes(x = cpue, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Bluegill CPUE")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -334,10 +338,10 @@ ggsave(filename = "Figures/Frequency Histograms/bgcpue_freq_hist_restricted.tiff
 #full data set
 (secchi.age.hist.full <- ggplot(data = binded %>% 
                                   mutate(Year = as.factor(year)), 
-                                aes(x = mean_secchi_m, fill = Year))+
+                                aes(x = mean_secchi_m, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Secchi Depth")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
@@ -351,10 +355,10 @@ ggsave(filename = "Figures/Frequency Histograms/secchi_freq_hist_full.tiff",
 (secchi.age.hist.restricted <- ggplot(data = binded %>% 
                                         filter(doy >= 141 & doy <=208) %>% 
                                         mutate(Year = as.factor(year)), 
-                                      aes(x = mean_secchi_m, fill = Year))+
+                                      aes(x = mean_secchi_m, fill = Type))+
     geom_histogram()+
     facet_wrap(~AGE)+
-    scale_fill_viridis_d()+
+    scale_fill_viridis_d(end = 0.9)+
     labs(y = "Count", x = "Secchi Depth")+
     scale_y_continuous(expand = c(0,0))+
     theme_bw()
