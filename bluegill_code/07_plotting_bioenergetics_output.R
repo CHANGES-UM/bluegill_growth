@@ -11,7 +11,7 @@ constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version1_same_gr
 
 #plot constant consumption length by age
 (constant.consumption.plot <- ggplot(data = constant.consumption, 
-                                     aes(x = Age, y = Length_end, color = DD, group = DD))+
+                                     aes(x = Age, y = Length_init, color = DD, group = DD))+
     geom_smooth(se = F)+
     scale_color_viridis_d(option = "A", end = 0.8)+
     scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))+
@@ -22,7 +22,7 @@ constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version1_same_gr
     theme()
 )
 
-# ggsave("Figures/constant_consumption_length_by_age.tiff", 
+# ggsave("Figures/constant_consumption_length_by_age.tiff",
 #        plot = constant.consumption.plot,
 #        dpi = 300, width = 200, height = 150, units = "mm")
 
@@ -50,6 +50,6 @@ bioenergetics.stacked <- ggarrange(constant.consumption.plot, constant.growth.pl
                                    common.legend = T, legend = "right")
 bioenergetics.stacked
 
-ggsave("Figures/bioenergetics_stacked.tiff", 
+ggsave("Figures/bioenergetics_stacked.jpg", 
        plot = bioenergetics.stacked,
        dpi = 300, width = 200, height = 150, units = "mm")

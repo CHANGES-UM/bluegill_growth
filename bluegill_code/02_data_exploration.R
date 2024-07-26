@@ -652,3 +652,43 @@ all.freqpoly
 ggsave(filename = "Figures/Frequency Histograms/all_freqpoly.jpeg",
        plot = all.freqpoly,
        width = 300, height = 550, units = "mm", dpi = 300)
+
+#-----Individual Lakes-----------------------------------------------------------
+#Exploring the data to look for individual lakes with repeated observations
+#Number of observations per lake
+lake.obs <- binded %>% 
+  group_by(new_key, Type) %>% 
+  tally() %>% 
+  arrange(desc(n))
+
+lake.obs.wide <- lake.obs %>% 
+  pivot_wider(names_from = Type, values_from = n) %>% 
+  arrange(desc(Contemporary), desc(Historic))
+
+lake.obs.top <- lake.obs %>% 
+  filter(n > 49)
+
+#plot observations through time forlakes with the most observations
+(lake.obs.year <- ggplot(data = binded %>% 
+                              filter(new_key %in% c(lake.obs.top$new_key)) %>% 
+                              mutate(Year = as.factor(year)), 
+                            aes(x = year, fill = AGE))+
+   geom_histogram()+
+   facet_wrap(~new_key)+
+   scale_fill_viridis_d(end = 0.9)+
+   labs(y = "Frequency", x = "Year")+
+   scale_y_continuous(expand = c(0,0))+
+   theme_bw()+
+   theme(axis.text.x = element_text(angle = 45, hjust = 0.8))
+)
+
+ggsave(filename = "Figures/Frequency Histograms/lakes_observations_year.tiff", 
+       plot = lake.obs.year, 
+       width = 200, height = 150, units = "mm", dpi = 300)
+
+
+
+
+
+
+
