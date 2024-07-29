@@ -16,9 +16,9 @@ The manuscript investigates Bluegill growth with climate warming. We used both m
 
 
 **The 'bluegill_data' folder includes the following datasets for the historical and contemporary data:** \
-**backcast lulc folder** includes historical land use and cover data 
-**Bioenergetics Output folder** includes data tables with the bioenergetics output
-**Census_Data_County folder** includes the data tables for the US Census data by county 
+**backcast lulc folder** includes historical land use and cover data \
+**Bioenergetics Output folder** includes data tables with the bioenergetics output \
+**Census_Data_County folder** includes the data tables for the US Census data by county \
 **all_grow_21NOV2023.csv** the historical data with bluegill age and length information \
 **fishc_bluegill2.csv**   historical data with the manually calculated catch per unit effort  \
 **fishc_qaqc_added_lakes.csv**  the historical catch data including gear and effort  \
