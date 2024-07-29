@@ -1,4 +1,4 @@
-# code for investigating correlations between preditor variables and summary stats 
+# code for investigating correlations between predictor variables and summary stats 
 #written by Peter Flood and Katelyn King 
 
 #----Load Libraries-------------------------------------------------------------
@@ -9,7 +9,10 @@ library(ggpubr) #stacking plots
 
 #---Load Data-------------------------------------------------------------------
 binded <- read.csv("bluegill_data/model_data.csv") %>% 
-  mutate(cpue = log(cpue+1)) %>% 
+    mutate(cpue = log10(cpue+1), 
+           logarea = log10(area_ha),
+           logdepth = log10(depth_m)
+    ) %>%
   mutate(AGE = as.factor(AGE)) %>% 
   mutate(Type = case_when(
     year <= 1998 ~ "Historic",
@@ -105,7 +108,7 @@ summary_data_lake<-read.csv("bluegill_data/model_data.csv") %>%
 #summary stats 
 skimr::skim(summary_data_lake)
 
-#preditor stats 
+#predator stats 
 sum(summary_data_lakeyear$walleye, na.rm = TRUE)/2454 * 100
 sum(summary_data_lakeyear$lmb, na.rm = TRUE)/2454 * 100
 sum(summary_data_lakeyear$pike, na.rm = TRUE)/2454 * 100
@@ -688,7 +691,19 @@ ggsave(filename = "Figures/Frequency Histograms/lakes_observations_year.tiff",
 
 
 
+#-----cpue and DD-----------------------------------------------------------
+#summary by lake year 
+summary_data_lakeyear<-binded %>% 
+  distinct(new_key, year, .keep_all = TRUE)
 
+dd_cpue_plot<-ggplot(summary_data_lakeyear, aes(dd_year, cpue)) + 
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE) +
+  theme_bw() + 
+  labs(x = "Degree Days", y="Bluegill CPUE")
 
+ggsave(filename = "Figures/dd_cpue_plot.tiff", 
+       plot = dd_cpue_plot, 
+       width = 200, height = 150, units = "mm", dpi = 300)
 
 
