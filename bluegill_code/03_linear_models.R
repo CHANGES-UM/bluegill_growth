@@ -232,7 +232,7 @@ fit.gamma$aic
 #                , fit
 # )
 
-###-------Partial Dataset-----------------------------------------------------------------
+###-------Reduced Dataset-----------------------------------------------------------------
 #restricted day of year (doy) range
 #partial to several important variables
 binded.doy.restricted <- binded %>% filter(doy >= 141 & doy <=208)

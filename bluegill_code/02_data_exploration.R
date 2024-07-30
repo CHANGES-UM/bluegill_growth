@@ -132,6 +132,8 @@ ggplot(binded, aes(doy,  colour = type)) +
 ggplot(binded, aes(doy)) + 
   geom_density(aes(fill = type), alpha=0.4)
 
+#Number of observations per type
+binded %>% group_by(type) %>% tally()
 
 #----Frequency histograms for covariates--------------------------
 ###DOY
