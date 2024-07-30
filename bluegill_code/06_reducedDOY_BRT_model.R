@@ -18,8 +18,7 @@ binded<-read.csv("bluegill_data/model_data.csv") %>%
          logdepth = log10(depth_m)
   )
 
-#restrict doy to day 141-208 ( May 20 - Jul 26) 
-#binded<-filter(binded, doy >= 141 & doy <=208) #is the IQR across the whole dataset
+#restrict doy 
 binded<-filter(binded, doy >= 139 & doy <=162) #is the IQR across the SNT dataset
 
 #### BRT models for individual ages #### 
