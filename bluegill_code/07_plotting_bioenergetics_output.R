@@ -3,17 +3,17 @@ library(tidyverse) #data manipulation and plotting
 library(ggpubr) #stacking plots
 
 #load data
-constant.consumption <- read.csv("bluegill_data/Bioenergetics Output/version1_same_consumption.csv") %>% 
+constant.consumption <- read.csv("bluegill_data/Bioenergetics Output/version5_same_p.csv") %>% 
   mutate(DD = as.factor(DD))
 
-constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version1_same_growth.csv") %>% 
+constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version5_same_growth.csv") %>% 
   mutate(DD = as.factor(DD))
 
 #plot constant consumption length by age
 (constant.consumption.plot <- ggplot(data = constant.consumption, 
                                      aes(x = Age, y = Length_init, color = DD, group = DD))+
     geom_smooth(se = F)+
-    scale_color_viridis_d(option = "A", end = 0.8)+
+    scale_color_viridis_d(option = "A", end = 0.95)+
     scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))+
     labs(y = "Length (mm)")+
     guides(fill = guide_legend(title = "Degree Days", reverse = T), 
@@ -30,7 +30,7 @@ constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version1_same_gr
 (constant.growth.plot <- ggplot(data = constant.growth, 
                                      aes(x = Age, y = Total_Cons, color = DD, group = DD))+
     geom_smooth(se = F)+
-    scale_color_viridis_d(option = "A", end = 0.8)+
+    scale_color_viridis_d(option = "A", end = 0.95)+
     scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))+
     labs(y = "Total Consumption (g)")+
     guides(fill = guide_legend(title = "Degree Days", reverse = T), 
@@ -50,6 +50,6 @@ bioenergetics.stacked <- ggarrange(constant.consumption.plot, constant.growth.pl
                                    common.legend = T, legend = "right")
 bioenergetics.stacked
 
-ggsave("Figures/bioenergetics_stacked.jpg", 
+ggsave("Figures/bioenergetics_stacked.tiff", 
        plot = bioenergetics.stacked,
        dpi = 300, width = 200, height = 150, units = "mm")

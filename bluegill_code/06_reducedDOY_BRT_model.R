@@ -853,7 +853,8 @@ lepmac.rel.inf<-lepmac.rel.inf %>%
                                          "Bluegill CPUE",
                                          "Agriculture","Forests", "Wetlands", "Day of Year", 
                                          "Secchi Depth",  "Urban",
-                                         "Walleye",  "Northern Pike", "Largemouth Bass",  "Yellow Perch")))
+                                         "Walleye",  "Northern Pike", "Largemouth Bass",  "Yellow Perch")),
+         `Variable Type` = gsub("Temporal", "Sampling Bias", `Variable Type`))
 
 (rel.inf.plot <- ggplot(lepmac.rel.inf ,
                         aes(x = fct_reorder(Predictor_Name, rel.inf), 

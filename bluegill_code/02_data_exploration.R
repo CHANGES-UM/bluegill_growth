@@ -84,7 +84,7 @@ brt.var.corrplot <- corrplot(brt.var.cor$r, type = "upper", order = "hclust",
 corrplot(brt.var.cor$r, type = "upper", order = "hclust",
           p.mat = brt.var.cor$P, sig.level = 0.05, insig = "blank")
  
-dev.off()
+#dev.off()
 
 #---summary statistics of predictor variables ----------------------
 
@@ -375,6 +375,221 @@ ggsave(filename = "Figures/Frequency Histograms/secchi_freq_hist_restricted.tiff
        width = 200, height = 150, units = "mm", dpi = 300)
 
 #----Freqpoly for covariates--------------------------
+###All age classes combined
+###DOY
+#full data set
+(doy.age.freqpoly.combined.ages.full <- ggplot(data = binded %>% 
+                                   mutate(Year = as.factor(year)), 
+                                 aes(x = doy, color = Type))+
+   geom_freqpoly()+
+   scale_color_viridis_d(end = 0.9)+
+   labs(y = "Count", x = "Day of Year")+
+   scale_y_continuous(expand = c(0,0))+
+   theme_bw()+
+   theme(axis.text = element_text(size = 8),
+         axis.text.x = element_text(angle = 45))
+)
+
+#restricted doy values 
+(doy.age.freqpoly.combined.ages.restricted <- ggplot(data = binded %>% 
+                                         filter(doy >= 141 & doy <=208) %>% 
+                                         mutate(Year = as.factor(year)), 
+                                       aes(x = doy, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Day of Year")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+
+###Degree days
+#full data set
+(dd.age.freqpoly.combined.ages.full <- ggplot(data = binded %>% 
+                                  mutate(Year = as.factor(year)), 
+                                aes(x = DD_mean, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Cohort Degree Days")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+#restricted doy values 
+(dd.age.freqpoly.combined.ages.restricted <- ggplot(data = binded %>% 
+                                        filter(doy >= 141 & doy <=208) %>% 
+                                        mutate(Year = as.factor(year)), 
+                                      aes(x = DD_mean, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Cohort Degree Days")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+###Lake Depth
+#full data set
+(lakedepth.age.freqpoly.combined.ages.full <- ggplot(data = binded %>% 
+                                         mutate(Year = as.factor(year)), 
+                                       aes(x = logdepth, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Log10 Lake Depth")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+#restricted doy values 
+(lakedepth.age.freqpoly.combined.ages.restricted <- ggplot(data = binded %>% 
+                                               filter(doy >= 141 & doy <=208) %>% 
+                                               mutate(Year = as.factor(year)), 
+                                             aes(x = logdepth, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Log10 Lake Depth")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+###Surface Temperature
+#full data set
+(surftemp.age.freqpoly.combined.ages.full <- ggplot(data = binded %>% 
+                                        mutate(Year = as.factor(year)), 
+                                      aes(x = surf_temp_year, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Mean Annual Surface Temperature")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+#restricted doy values 
+(surftemp.age.freqpoly.combined.ages.restricted <- ggplot(data = binded %>% 
+                                              filter(doy >= 141 & doy <=208) %>% 
+                                              mutate(Year = as.factor(year)), 
+                                            aes(x = surf_temp_year, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Mean Annual Surface Temperature")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+###Lake Area
+#full data set
+(lakearea.age.freqpoly.combined.ages.full <- ggplot(data = binded %>% 
+                                        mutate(Year = as.factor(year)), 
+                                      aes(x = logarea, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Log10 Lake Area")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+#restricted doy values 
+(lakearea.age.freqpoly.combined.ages.restricted <- ggplot(data = binded %>% 
+                                              filter(doy >= 141 & doy <=208) %>% 
+                                              mutate(Year = as.factor(year)), 
+                                            aes(x = logarea, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Log10 Lake Area")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+###Bluegill CPUE
+#full data set
+(bgcpue.age.freqpoly.combined.ages.full <- ggplot(data = binded %>% 
+                                      mutate(Year = as.factor(year)), 
+                                    aes(x = cpue, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Bluegill CPUE")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+#restricted doy values 
+(bgcpue.age.freqpoly.combined.ages.restricted <- ggplot(data = binded %>% 
+                                            filter(doy >= 141 & doy <=208) %>% 
+                                            mutate(Year = as.factor(year)), 
+                                          aes(x = cpue, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Bluegill CPUE")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+###Secchi Depth
+#full data set
+(secchi.age.freqpoly.combined.ages.full <- ggplot(data = binded %>% 
+                                      mutate(Year = as.factor(year)), 
+                                    aes(x = mean_secchi_m, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Secchi Depth")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+#restricted doy values 
+(secchi.age.freqpoly.combined.ages.restricted <- ggplot(data = binded %>% 
+                                            filter(doy >= 141 & doy <=208) %>% 
+                                            mutate(Year = as.factor(year)), 
+                                          aes(x = mean_secchi_m, color = Type))+
+    geom_freqpoly()+
+    scale_color_viridis_d(end = 0.9)+
+    labs(y = "Count", x = "Secchi Depth")+
+    scale_y_continuous(expand = c(0,0))+
+    theme_bw()+
+    theme(axis.text = element_text(size = 8),
+          axis.text.x = element_text(angle = 45))
+)
+
+###----Stacked Combined Ages Freqpoly------------------------------------------------------
+all.freqpoly.combined.ages <- ggarrange(doy.age.freqpoly.combined.ages.full, doy.age.freqpoly.combined.ages.restricted,
+                          dd.age.freqpoly.combined.ages.full, dd.age.freqpoly.combined.ages.restricted,
+                          surftemp.age.freqpoly.combined.ages.full, surftemp.age.freqpoly.combined.ages.restricted,
+                          lakearea.age.freqpoly.combined.ages.full, lakearea.age.freqpoly.combined.ages.restricted,
+                          lakedepth.age.freqpoly.combined.ages.full, lakedepth.age.freqpoly.combined.ages.restricted,
+                          secchi.age.freqpoly.combined.ages.full, secchi.age.freqpoly.combined.ages.restricted,
+                          bgcpue.age.freqpoly.combined.ages.full, bgcpue.age.freqpoly.combined.ages.restricted,
+                          ncol = 2, nrow = 7, labels = "AUTO", 
+                          common.legend = T, legend = "right")
+
+all.freqpoly.combined.ages
+
+ggsave(filename = "Figures/Frequency Histograms/all_freqpoly_combined_ages.jpeg",
+       plot = all.freqpoly.combined.ages,
+       width = 300, height = 550, units = "mm", dpi = 300)
+###----Freqpolys Per Age Class----------------------------------------------------
 ###DOY
 #full data set
 (doy.age.freqpoly.full <- ggplot(data = binded %>% 
@@ -641,7 +856,7 @@ ggsave(filename = "Figures/Frequency Histograms/secchi_freq_freqpoly_restricted.
        plot = secchi.age.freqpoly.restricted, 
        width = 200, height = 150, units = "mm", dpi = 300)
 
-###----Stacked Freqpoly All------------------------------------------------------
+###----Stacked Freqpoly per age class------------------------------------------------------
 all.freqpoly <- ggarrange(doy.age.freqpoly.full, doy.age.freqpoly.restricted,
                           dd.age.freqpoly.full, dd.age.freqpoly.restricted,
                           surftemp.age.freqpoly.full, surftemp.age.freqpoly.restricted,
