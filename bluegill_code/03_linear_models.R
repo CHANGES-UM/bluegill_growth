@@ -12,7 +12,9 @@ library(ggpmisc)
 library(ggpubr) #arranging multipanel plots
 #-----------------------Load Data---------------------------------------------------
 binded <- read.csv("bluegill_data/model_data.csv") %>% 
-  mutate(cpue = log(cpue+1)) %>% 
+  mutate(cpue = log(cpue+1), 
+         logarea = log10(area_ha),
+         logdepth = log10(depth_m)) %>% 
   mutate(AGE = as.factor(AGE),
          log_length = log10(length_mean_mm))
 #-----------------------Linear Regressions-------------------------------------------
@@ -236,6 +238,7 @@ fit.gamma$aic
 #restricted day of year (doy) range
 #partial to several important variables
 binded.doy.restricted <- binded %>% filter(doy >= 141 & doy <=208)
+binded.doy.restricted<-filter(binded, doy >= 139 & doy <=162) #is the IQR across the SNT dataset
 
 (year.age.hist.restricted <- ggplot(data = binded.doy.restricted, aes(x = year))+
    geom_histogram()+
@@ -386,3 +389,31 @@ fit.gamma.restricted$aic
 #                        , scale = fit.weibull$estimate["scale"])$statistic
 #                , fit
 # )
+
+#### plot depth and area #### 
+ggplot(data = binded.doy.restricted, aes(x = year, y = logdepth))+
+    geom_point()+
+    geom_smooth()+
+    theme_bw()
+
+ggplot(data = binded.doy.restricted, aes(x = year, y = logarea))+
+  geom_point()+
+  geom_smooth()+
+  theme_bw()
+
+#log transformed
+area_mod= lm( logarea ~ year, data = binded.doy.restricted )
+summary(area_mod)
+
+depth_mod =lm( logdepth ~ year, data = binded.doy.restricted )
+summary(depth_mod)
+
+#untransformed 
+area_mod= lm( area_ha ~ year, data = binded.doy.restricted )
+summary(area_mod)
+
+depth_mod =lm( depth_m ~ year, data = binded.doy.restricted )
+summary(depth_mod)
+
+
+
