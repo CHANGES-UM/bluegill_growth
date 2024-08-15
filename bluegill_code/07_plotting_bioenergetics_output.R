@@ -3,15 +3,15 @@ library(tidyverse) #data manipulation and plotting
 library(ggpubr) #stacking plots
 
 #load data
-constant.consumption <- read.csv("bluegill_data/Bioenergetics Output/version5_same_p.csv") %>% 
+constant.consumption <- read.csv("bluegill_data/Bioenergetics Output/version6_same_p.csv") %>% 
   mutate(DD = as.factor(DD))
 
-constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version5_same_growth.csv") %>% 
+constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version6_same_growth.csv") %>% 
   mutate(DD = as.factor(DD))
 
 #plot constant consumption length by age
 (constant.consumption.plot <- ggplot(data = constant.consumption, 
-                                     aes(x = Age, y = Length_init, color = DD, group = DD))+
+                                     aes(x = Age, y = Initial.Length, color = DD, group = DD))+
     geom_smooth(se = F)+
     scale_color_viridis_d(option = "A", end = 0.95)+
     scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))+
@@ -28,7 +28,7 @@ constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version5_same_gr
 
 #plot constant growth consumption by age
 (constant.growth.plot <- ggplot(data = constant.growth, 
-                                     aes(x = Age, y = Total_Cons, color = DD, group = DD))+
+                                     aes(x = Age, y = Total.Consumption, color = DD, group = DD))+
     geom_smooth(se = F)+
     scale_color_viridis_d(option = "A", end = 0.95)+
     scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))+

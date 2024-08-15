@@ -102,7 +102,7 @@ byf.shapiro(length_mean_mm ~ as.factor(AGE), data = binded)
 #not normal, log transformation doesn't fix this
 
 #running lm anyway just to see what it looks like 
-lm.length.year <- lm(length_mean_mm ~ year*AGE + logarea + logdepth, data = binded)
+lm.length.year <- lm(length_mean_mm ~ year*AGE + I(logarea^2) + I(logdepth^2), data = binded)
 summary(lm.length.year)
 eta_squared(lm.length.year)
 interpret(eta_squared(lm.length.year), rules = "cohen1992")
@@ -156,14 +156,14 @@ test_predictions(result) %>%
     #stat_poly_eq(use_label("eq"))+
     #stat_regline_equation()+
     stat_poly_line()+
-    annotate(geom = "text", label = "y = 45 + 0.0.084x", x = 2000, y = 217)+
-    annotate(geom = "text", label = "y = -10 + 0.11x", x = 2000, y = 207)+
-    annotate(geom = "text", label = "y = -100 + 0.15x", x = 2000, y = 194)+
-    annotate(geom = "text", label = "y = 200 - 0.015x", x = 2000, y = 177)+
-    annotate(geom = "text", label = "y = 580 - 0.22x", x = 2000, y = 155)+
-    annotate(geom = "text", label = "y = 880 - 0.38x", x = 2000, y = 132)+
-    annotate(geom = "text", label = "y = 1200 - 0.54x", x = 2000, y = 105)+
-    annotate(geom = "text", label = "y = 1700 - 0.82x", x = 2000, y = 75)+
+    annotate(geom = "text", label = "y = 77 + 0.07x", x = 2000, y = 224)+
+    annotate(geom = "text", label = "y = 21 + 0.093x", x = 2000, y = 212)+
+    annotate(geom = "text", label = "y = -64 + 0.13x", x = 2000, y = 199)+
+    annotate(geom = "text", label = "y = 230 - 0.028x", x = 2000, y = 182)+
+    annotate(geom = "text", label = "y = 610 - 0.23x", x = 2000, y = 160)+
+    annotate(geom = "text", label = "y = 920 - 0.39x", x = 2000, y = 137)+
+    annotate(geom = "text", label = "y = 1200 - 0.55x", x = 2000, y = 110)+
+    annotate(geom = "text", label = "y = 1700 - 0.83x", x = 2000, y = 80)+
     scale_color_viridis_d()+
     scale_fill_viridis_d()+
     labs(title = NULL,
@@ -238,7 +238,7 @@ fit.gamma$aic
 #restricted day of year (doy) range
 #partial to several important variables
 binded.doy.restricted <- binded %>% filter(doy >= 141 & doy <=208)
-binded.doy.restricted<-filter(binded, doy >= 139 & doy <=162) #is the IQR across the SNT dataset
+#binded.doy.restricted<-filter(binded, doy >= 139 & doy <=162) #is the IQR across the SNT dataset
 
 (year.age.hist.restricted <- ggplot(data = binded.doy.restricted, aes(x = year))+
    geom_histogram()+
@@ -255,8 +255,10 @@ byf.shapiro(length_mean_mm ~ as.factor(AGE), data = binded.doy.restricted)
 #not normal for all age classes, log transformation makes it worse
 
 #running lm anyway just to see what it looks like 
-lm.length.year.restricted <- lm(length_mean_mm ~ year*AGE + logarea + logdepth, 
-                     data = binded.doy.restricted)
+#candidate models:
+lm.length.year.restricted <- lm(length_mean_mm ~ year*AGE + I(logarea^2) + I(logdepth^2), 
+                                     data = binded.doy.restricted)
+
 summary(lm.length.year.restricted)
 eta_squared(lm.length.year.restricted)
 interpret(eta_squared(lm.length.year.restricted), rules = "cohen1992")
@@ -311,14 +313,14 @@ test_predictions(result.restricted) %>%
     #stat_poly_eq(use_label("eq"))+
     #stat_regline_equation()+
     stat_poly_line()+
-    annotate(geom = "text", label = "y = 280 - 0.033x", x = 2000, y = 217)+
-    annotate(geom = "text", label = "y = -32 + 0.085x", x = 2000, y = 207)+
-    annotate(geom = "text", label = "y = -61 + 0.13x", x = 2000, y = 194)+
-    annotate(geom = "text", label = "y = 180 + 0.004x", x = 2000, y = 177)+
-    annotate(geom = "text", label = "y = 520 - 0.19x", x = 2000, y = 154)+
-    annotate(geom = "text", label = "y = 750 - 0.31x", x = 2000, y = 130)+
-    annotate(geom = "text", label = "y = 950 - 0.43x", x = 2000, y = 100)+
-    annotate(geom = "text", label = "y = 1100 - 0.53x", x = 2000, y = 70)+
+    annotate(geom = "text", label = "y = 310 - 0.046x", x = 2000, y = 224)+
+    annotate(geom = "text", label = "y = 70 + 0.069x", x = 2000, y = 212)+
+    annotate(geom = "text", label = "y = -24 + 0.11x", x = 2000, y = 199)+
+    annotate(geom = "text", label = "y = 210 - 0.015x", x = 2000, y = 182)+
+    annotate(geom = "text", label = "y = 560 - 0.2x", x = 2000, y = 159)+
+    annotate(geom = "text", label = "y = 790 - 0.33x", x = 2000, y = 135)+
+    annotate(geom = "text", label = "y = 980 - 0.44x", x = 2000, y = 105)+
+    annotate(geom = "text", label = "y = 1200 - 0.55x", x = 2000, y = 75)+
     scale_color_viridis_d()+
     scale_fill_viridis_d()+
     labs(title = NULL,
