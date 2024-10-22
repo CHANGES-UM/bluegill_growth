@@ -47,32 +47,53 @@ summary(lm.doy.yr)
 
 #How do our climate variables vary through time?
 
-(temp.yr.plot <- ggplot(data = binded, aes(x = year, y = surf_temp_year))+
+(temp.yr.plot <- ggplot(data = binded, aes(x = year, y = surf_temp_year, 
+                                           color = LAT_DD, fill = LAT_DD))+
     geom_point()+
     geom_smooth()+
+    scale_color_viridis_c(direction = -1)+
+    scale_fill_viridis_c(direction = -1)+
     labs(y = "Surface Temperature", x = "Year")+
-    theme_bw()
+    theme_bw()+
+    guides(fill = guide_legend(title = "Latitude"),
+           color = guide_legend(title = "Latitude"))
 )
 
-(dd.mean.yr.plot <- ggplot(data = binded, aes(x = year, y = DD_mean))+
+(dd.mean.yr.plot <- ggplot(data = binded, aes(x = year, y = DD_mean, 
+                                              color = LAT_DD, fill = LAT_DD))+
     geom_point()+
     geom_smooth()+
+    scale_color_viridis_c(direction = -1)+
+    scale_fill_viridis_c(direction = -1)+
     labs(y = "Mean Degree Days", x = "Year")+
-    theme_bw()
+    theme_bw()+
+    guides(fill = guide_legend(title = "Latitude"),
+           color = guide_legend(title = "Latitude"))
 )
 
-(dd.yr.plot <- ggplot(data = binded, aes(x = year, y = dd_year))+
+(dd.yr.plot <- ggplot(data = binded, aes(x = year, y = dd_year, 
+                                         color = LAT_DD, fill = LAT_DD))+
     geom_point()+
     geom_smooth()+
+    scale_color_viridis_c(direction = -1)+
+    scale_fill_viridis_c(direction = -1)+
     labs(y = "Degree Days", x = "Year")+
-    theme_bw()
+    theme_bw()+
+    guides(fill = guide_legend(title = "Latitude"),
+           color = guide_legend(title = "Latitude"))
 )
 
-(lat.yr.plot <- ggplot(data = binded, aes(x = year, y = LAT_DD))+
+(lat.yr.plot <- ggplot(data = binded, aes(x = year, y = LAT_DD,
+                                          color = surf_temp_year, 
+                                          fill = surf_temp_year))+
     geom_point()+
     geom_smooth()+
+    scale_color_viridis_c()+
+    scale_fill_viridis_c()+
     labs(y = "Latitude", x = "Year")+
-    theme_bw()
+    theme_bw()+
+    guides(fill = guide_legend(title = "Surface Temperature"),
+           color = guide_legend(title = "Surface Temperature"))
 )
 
 climate.plot <- ggarrange(temp.yr.plot, dd.yr.plot, 
