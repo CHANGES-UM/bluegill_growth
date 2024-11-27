@@ -1,12 +1,13 @@
 #load libraries
 library(tidyverse) #data manipulation and plotting
 library(ggpubr) #stacking plots
+library(openxlsx) #read and write Excel files
 
 #load data
-constant.consumption <- read.csv("bluegill_data/Bioenergetics Output/version6_same_p.csv") %>% 
+constant.consumption <- read.xlsx("bluegill_data/Bioenergetics Output/version7_same_p.xlsx") %>% 
   mutate(DD = as.factor(DD))
 
-constant.growth <- read.csv("bluegill_data/Bioenergetics Output/version6_same_growth.csv") %>% 
+constant.growth <- read.xlsx("bluegill_data/Bioenergetics Output/version7_same_growth.xlsx") %>% 
   mutate(DD = as.factor(DD))
 
 #plot constant consumption length by age
