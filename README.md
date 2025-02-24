@@ -1,5 +1,5 @@
 # bluegill_growth
-The following scripts and data support the manuscript: **Elise E. Grabda, Peter J. Flood, Katelyn B.S. King, James E. Breck, Kevin E. Wehrly, Karen M. Alofs. "Mismatch between climated-based bioenergetics model of fish growth and long-term and regional-scale empirical data" currently under review.**
+The following scripts and data support the manuscript: **Elise E. Grabda, Peter J. Flood, Katelyn B.S. King, James E. Breck, Kevin E. Wehrly, Karen M. Alofs. "Mismatch between climated-based bioenergetics model of fish growth and long-term and regional-scale empirical data" CJFAS. https://doi.org/10.1139/cjfas-2024-0266**
 
 The manuscript investigates Bluegill growth with climate warming. We used both mathematical simulation and Boosted Regression Tree modeling. These data revealed that older Bluegill (ages 5-8) were either increasing as expected or not changing, while younger Bluegill (ages 1-4) were growing more slowly. Since simulations showed an increased consumption with higher temperatures to maintain the same growth, it is likely that young Bluegill are not able to find enough food at warmer temperatures, due to an increase in density, which leads to slower growth. 
 
